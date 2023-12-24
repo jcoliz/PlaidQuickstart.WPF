@@ -40,6 +40,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Core\Core.csproj" />
+	  <ProjectReference Include="..\PlaidProviders\PlaidProviders.csproj" />
 	</ItemGroup>
 
 </Project>
