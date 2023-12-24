@@ -17,6 +17,7 @@
 	    <PackageReference Include="CefSharp.Wpf.NetCore" Version="120.1.80" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+	  	<PackageReference Include="NetEscapades.Configuration.Yaml" Version="3.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -26,6 +27,9 @@
 
 	<ItemGroup>
 		<Content Include="appsettings.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="secrets.yaml" Condition="Exists('secrets.yaml')">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>

@@ -40,6 +40,10 @@ public partial class App : Application
                 // Add an application-specific config file
                 configurationBuilder.AddJsonFile("appsettings.json", optional: false);
 
+                // Add a dedicated config file for Plaid secrets
+                // Only used when running as standalone client
+                configurationBuilder.AddYamlFile("secrets.yaml", optional: true);
+
                 // Enable picking up configuration from the environment vars
                 configurationBuilder.AddEnvironmentVariables();
             })
