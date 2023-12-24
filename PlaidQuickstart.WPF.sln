@@ -5,6 +5,8 @@ VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrontEnd", "FrontEnd\FrontEnd.csproj", "{F9D2240E-D790-43FC-933F-9F89C0A0E19D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{5EBDFBEC-0394-4298-8766-19E3A9795488}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -21,6 +23,14 @@ Global
 		{F9D2240E-D790-43FC-933F-9F89C0A0E19D}.Release|ARM64.Build.0 = Release|ARM64
 		{F9D2240E-D790-43FC-933F-9F89C0A0E19D}.Release|x64.ActiveCfg = Release|x64
 		{F9D2240E-D790-43FC-933F-9F89C0A0E19D}.Release|x64.Build.0 = Release|x64
+		{5EBDFBEC-0394-4298-8766-19E3A9795488}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{5EBDFBEC-0394-4298-8766-19E3A9795488}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{5EBDFBEC-0394-4298-8766-19E3A9795488}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5EBDFBEC-0394-4298-8766-19E3A9795488}.Debug|x64.Build.0 = Debug|Any CPU
+		{5EBDFBEC-0394-4298-8766-19E3A9795488}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{5EBDFBEC-0394-4298-8766-19E3A9795488}.Release|ARM64.Build.0 = Release|Any CPU
+		{5EBDFBEC-0394-4298-8766-19E3A9795488}.Release|x64.ActiveCfg = Release|Any CPU
+		{5EBDFBEC-0394-4298-8766-19E3A9795488}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
