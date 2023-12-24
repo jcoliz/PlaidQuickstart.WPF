@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -13,6 +14,17 @@ public partial class App : Application
     public App()
     {
         _host = new HostBuilder()
+            .ConfigureAppConfiguration((context, configurationBuilder) =>
+            {
+                // Config files will be found in the content root path
+                configurationBuilder.SetBasePath(context.HostingEnvironment.ContentRootPath);
+
+                // Add an application-specific config file
+                configurationBuilder.AddJsonFile("appsettings.json", optional: false);
+
+                // Enable picking up configuration from the environment vars
+                configurationBuilder.AddEnvironmentVariables();
+            })
             .ConfigureServices((context, services) =>
             {
                 services.AddSingleton<MainWindow>();
