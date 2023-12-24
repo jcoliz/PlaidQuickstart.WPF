@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using FrontEnd.Ui;
+using System.Windows;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -40,8 +41,9 @@ public partial class App : Application
                 configurationBuilder.AddEnvironmentVariables();
             })
             .ConfigureServices((context, services) =>
-            {
+            {                
                 services.AddSingleton<MainWindow>();
+                services.Configure<UiSettings>(context.Configuration.GetSection(UiSettings.Section));
             })
             .ConfigureLogging((context, logging) =>
             {
