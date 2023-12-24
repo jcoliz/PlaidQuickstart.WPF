@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace FrontEnd;
+namespace FrontEnd.Main;
 /// <summary>
 /// Interaction logic for App.xaml
 /// </summary>
