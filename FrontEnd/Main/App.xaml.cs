@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace FrontEnd.Main;
 /// <summary>
@@ -13,6 +14,19 @@ public partial class App : Application
 
     public App()
     {
+        //
+        // Set up a console window
+        //
+        // Useful to observe logs
+        // Remove this if you don't want to see a console window with logs
+        //
+        ConsoleAllocator.ShowConsoleWindow();
+
+        //
+        // Set up .NET generic host
+        //
+        // https://learn.microsoft.com/en-us/dotnet/core/extensions/generic-host
+        //
         _host = new HostBuilder()
             .ConfigureAppConfiguration((context, configurationBuilder) =>
             {
@@ -28,6 +42,19 @@ public partial class App : Application
             .ConfigureServices((context, services) =>
             {
                 services.AddSingleton<MainWindow>();
+            })
+            .ConfigureLogging((context, logging) =>
+            {
+                // Get log configuration out of `Logging` section in configuration
+                logging.AddConfiguration(context.Configuration.GetSection("Logging"));
+
+                // Send logs to the console window
+                // (Only useful if console window has been created)
+                logging.AddConsole();
+
+                // Send logs to debug console
+                // (Only useful if running in Visual Studio)
+                logging.AddDebug();
             })
             .Build();
     }
