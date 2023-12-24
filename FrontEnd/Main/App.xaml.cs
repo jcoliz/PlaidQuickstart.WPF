@@ -4,6 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using CefSharp.Wpf;
+using CefSharp;
+using System.IO;
 
 namespace FrontEnd.Main;
 /// <summary>
@@ -60,6 +63,24 @@ public partial class App : Application
                 logging.AddDebug();
             })
             .Build();
+
+        //
+        // Set up CefSharp
+        //
+
+        var settings = new CefSettings()
+        {
+            //By default CefSharp will use an in-memory cache, you need to specify a Cache Folder to persist data
+            CachePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CefSharp\\Cache"),
+            LogSeverity = LogSeverity.Info,
+            LogFile = "console.log"
+        };
+
+        if (!Cef.IsInitialized)
+        {
+            //Perform dependency check to make sure all relevant resources are in our output directory.
+            Cef.Initialize(settings, performDependencyCheck: true, browserProcessHandler: null);
+        }
     }
 
     private async void Application_Startup(object sender, StartupEventArgs e)

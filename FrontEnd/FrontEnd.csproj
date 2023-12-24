@@ -14,6 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	    <PackageReference Include="CefSharp.Wpf.NetCore" Version="120.1.80" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
 	</ItemGroup>

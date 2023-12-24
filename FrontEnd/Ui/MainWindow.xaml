@@ -1,12 +1,15 @@
-﻿<Window x:Class="FrontEnd.MainWindow"
+﻿<Window x:Class="FrontEnd.Ui.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:FrontEnd"
+        xmlns:cef="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
+        xmlns:local="clr-namespace:FrontEnd.Ui"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-
+        <cef:ChromiumWebBrowser x:Name="Browser"
+                        Address="{Binding WebAddress}">
+        </cef:ChromiumWebBrowser>
     </Grid>
 </Window>
