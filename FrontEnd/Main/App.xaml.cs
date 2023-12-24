@@ -43,6 +43,7 @@ public partial class App : Application
             .ConfigureServices((context, services) =>
             {                
                 services.AddSingleton<MainWindow>();
+                services.AddSingleton<MainViewModel>();
                 services.Configure<UiSettings>(context.Configuration.GetSection(UiSettings.Section));
             })
             .ConfigureLogging((context, logging) =>
