@@ -25,7 +25,7 @@ public partial class MainWindow : Window
 
     }
 
-    private async void LinkButton_Click(object sender, RoutedEventArgs e)
+    private void LinkButton_Click(object sender, RoutedEventArgs e)
     {
         var linkwindow = new LinkWindow((DataContext as MainViewModel)!, _logger);
         linkwindow!.Owner = this;
