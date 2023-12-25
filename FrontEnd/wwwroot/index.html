@@ -15,7 +15,7 @@
                 .then(async (response) => {
                     if (response.status < 400) {
                         const info = await response.json();
-                        console.log(`Info OK: ${JSON.stringify(info)}`);
+                        console.log('Info: OK', JSON.stringify(info));
                         if (info.AccessToken !== null) {
                             $('#loading').hide();
                             $('#creds-item-id').text(info.ItemId);
@@ -30,13 +30,13 @@
                         }
                     }
                     else {
-                        console.log(`Info FAILED: ${response.status}`);
+                        console.error('Info: FAILED Status', response.status);
                         $('#response').text(`LINK FAILED Status:${response.status}. Please check server logs for details.`);
                     }
 
                 })
                 .catch(reason => {
-                    console.log(`Info FAILED: ${reason}`);
+                    console.error('Info: FAILED', JSON.stringify(reason));
                 });
         };
 
@@ -44,19 +44,17 @@
         const createLinkToken = async function (fix) {
             const res = await fetch(`/api/create_link_token?fix=${fix}`);
             const linkToken = await res.json();
-            console.log(`Link token: ${JSON.stringify(linkToken)}`);
+            console.log('Create token: OK', JSON.stringify(linkToken));
             return linkToken;
         };
 
         // Initialize Link
         const launchLink = async function (fix) {
-            console.log(`Link: Launch fix=${fix}`);
+            console.debug(`Link: Launch fix=${fix}`);
             const handler = Plaid.create({
                 token: await createLinkToken(fix),
                 onSuccess: async (publicToken, metadata) => {
-                    console.log("Link: OK");
-                    console.log("Metadata:", JSON.stringify(metadata));
-                    console.log("Public Token:", JSON.stringify(publicToken));
+                    console.log("Link: OK", JSON.stringify(publicToken), JSON.stringify(metadata));
 
                     // Needs to match C# Shared.LinkResult class
                     var result = {
@@ -69,12 +67,10 @@
                     await exchangeToken(result);
                 },
                 onEvent: (eventName, metadata) => {
-                    console.log("Event:", eventName);
-                    console.log("Metadata:", JSON.stringify(metadata));
+                    console.debug("Link: Event", eventName, JSON.stringify(metadata));
                 },
                 onExit: (error, metadata) => {
-                    console.log("ERROR:", JSON.stringify(error));
-                    console.log("Metadata:", JSON.stringify(metadata));
+                    console.error("Link: ERROR", JSON.stringify(error), JSON.stringify(metadata));
                 },
             });
             handler.open();
@@ -93,7 +89,7 @@
                 .then(async (response) => {
                     if (response.status < 400) {
                         const info = await response.json();
-                        console.log(`Exchange OK: ${JSON.stringify(info)}`);
+                        console.log('Exchange: Received', JSON.stringify(info));
                         if (info.AccessToken !== null) {
                             $('#link-done').show();
                             $('#link-ready').hide();
@@ -102,23 +98,23 @@
                             $('#creds-access-token').text(info.AccessToken);
                             $('#link-done').show();
                             $('#response').text(JSON.stringify(info, null, 2));
-                            console.log("Exchange: OK")
+                            console.log("Exchange: OK");
                         }
                         else {
-                            console.log(`Exchange FAILED: No access token returned`);
+                            console.error(`Exchange: FAILED. No access token returned`);
                             $('#loading').show();
                             $('#loading').text(`LINK EXCHANGE FAILED: No access token returned. Please check server logs for details.`);
                             $('#link-ready').show();
                         }
                     }
                     else {
-                        console.log(`Exchange FAILED Status: ${response.status}`);
+                        console.error('Exchange: FAILED Status', response.status);
                         $('#loading').text(`LINK EXCHANGE FAILED Status:${response.status}. Please check server logs for details.`);
                     }
 
                 })
                 .catch(reason => {
-                    console.log(`Exchange FAILED: ${reason}`);
+                    console.error('Exchange: FAILED', JSON.stringify(reason));
                 });
         };
 
