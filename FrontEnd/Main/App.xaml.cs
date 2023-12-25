@@ -65,7 +65,7 @@ public partial class App : Application
                 services.Configure<PlaidCredentials>(context.Configuration.GetSection(PlaidCredentials.SectionKey));
                 services.Configure<PlaidOptions>(context.Configuration.GetSection(PlaidOptions.SectionKey));
                 services.AddSingleton<PlaidClient>();
-                services.AddSingleton<ILinkClient, LinkClient>();
+                services.AddSingleton<ILinkClient, LinkProvider>();
                 services.AddSingleton<IFetchClient, FetchProvider>();
             })
             .ConfigureLogging((context, logging) =>

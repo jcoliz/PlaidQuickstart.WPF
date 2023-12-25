@@ -20,7 +20,7 @@ namespace PlaidProviders;
 /// <param name="logger">Where to log</param>
 /// <param name="credentials">Credentials of logged-in user</param>
 /// <param name="client">Client to use for connection</param>
-public class LinkClient(ILogger<LinkClient> logger, IOptions<PlaidCredentials> credentials, PlaidClient client) : ILinkClient
+public class LinkProvider(ILogger<LinkProvider> logger, IOptions<PlaidCredentials> credentials, PlaidClient client) : ILinkClient
 {
     public async Task<string> CreateLinkToken(bool? fix)
     {
