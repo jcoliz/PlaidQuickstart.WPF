@@ -12,7 +12,18 @@
                     if (response.status < 400) {
                         const info = await response.json();
                         console.log(`Info OK: ${JSON.stringify(info)}`);
-                        $('#response').text(JSON.stringify(info, null, 2));
+                        if (info.AccessToken !== null) {
+                            $('#loading').hide();
+                            $('#creds-item-id').text(info.ItemId);
+                            $('#creds-access-token').text(info.AccessToken);
+                            $('#link-done').show();
+                            $('#response').text(JSON.stringify(info, null, 2));
+                            console.log("GetStatus: OK")
+                        }
+                        else {
+                            $('#loading').hide();
+                            $('#link-ready').show();
+                        }
                     }
                     else {
                         console.log(`Info FAILED: ${response.status}`);
@@ -30,15 +41,70 @@
 </head>
 <body>
     <h2>Plaid Quickstart</h2>
-    <div>
-        <pre id="response"
-             style="
-            margin-left: 10px;
-            overflow-y: scroll;
-            overflow-x: hidden;
-            font-size: 14px;
-            background: #F6F6F6;
-          "></pre>
+    <div id="loading">
+        Loading...
     </div>
+
+    <div id="link-ready" style="display:none">
+        <h4>
+            A sample end-to-end integration with Plaid
+        </h4>
+        <p>
+            The Plaid flow begins when your user wants to connect their bank
+            account to your app. Simulate this by clicking the button below to
+            launch Link - the client-side component that your users will
+            interact with in order to link their accounts to Plaid and allow you
+            to access their accounts via the Plaid API.
+        </p>
+
+        <div class="linkButton">
+            <button type="button"
+                    id="link-account"
+                    style="
+                        border: 1px solid black;
+                        border-radius: 5px;
+                        background: black;
+                        height: 48px;
+                        width: 155px;
+                        margin-top: 5px;
+                        margin-left: 10px;
+                        color: white;
+                        font-size: 18px;
+                      ">
+                <strong>Link account</strong>
+            </button>
+        </div>
+    </div>
+
+    <div id="link-done" style="display:none">
+        <h4 class="subtitle">
+            Congrats! By linking an account, you have created an <a href="http://plaid.com/docs/quickstart/glossary/#item"
+                                                                    target="_blank">Item</a>.
+        </h4>
+
+        <div class="itemAccessContainer">
+            <p class="itemAccessRow">
+                <span class="idName">item_id</span>
+                <span class="tokenText" id="creds-item-id">...</span>
+            </p>
+
+            <p class="itemAccessRow">
+                <span class="idName">access_token</span>
+                <span class="tokenText" id="creds-access-token">...</span>
+            </p>
+        </div>
+
+        <div>
+            <pre id="response"
+                 style="
+                    margin-left: 10px;
+                    overflow-y: scroll;
+                    overflow-x: hidden;
+                    font-size: 14px;
+                    background: #F6F6F6;
+                  "></pre>
+        </div>
+    </div>
+
 </body>
 </html>
