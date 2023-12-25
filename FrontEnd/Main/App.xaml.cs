@@ -63,6 +63,7 @@ public partial class App : Application
                 services.AddSingleton<LinkSchemeHandlerFactory>();
                 services.AddScoped<LinkResourceHandler>();
                 services.Configure<PlaidCredentials>(context.Configuration.GetSection(PlaidCredentials.SectionKey));
+                services.Configure<PlaidOptions>(context.Configuration.GetSection(PlaidOptions.SectionKey));
                 services.AddSingleton<PlaidClient>();
                 services.AddSingleton<ILinkClient, LinkClient>();
             })

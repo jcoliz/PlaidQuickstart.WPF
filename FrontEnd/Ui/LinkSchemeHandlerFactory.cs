@@ -1,4 +1,5 @@
 ﻿using CefSharp;
+using Core.Models;
 using Core.Providers;
 using Microsoft.Extensions.Logging;
 using System.Net;
@@ -69,8 +70,28 @@ public class LinkResourceHandler(ILogger<LinkResourceHandler> logger, ILinkClien
             {
                 try
                 {
+                    T getpostdata<T>()
+                    {
+                        var postDataElement = request.PostData.Elements.FirstOrDefault()!.Bytes;
+                        var str = (postDataElement is not null) ? Encoding.UTF8.GetString(postDataElement) : null;
+                        return JsonSerializer.Deserialize<T>(str!)!;
+                    }
+
+                    var query = HttpUtility.ParseQueryString(uri.Query);
+
+                    T? getquery<T>(string key)
+                    {
+                        var val = query[key];
+                        if (val is not null)
+                            return (T)Convert.ChangeType(val, typeof(T));
+                        else
+                            return default(T);
+                    }
+
                     object? response = endpoint switch
                     {
+                        "create_link_token" => await linkclient.CreateLinkToken(fix: getquery<bool>("fix")),
+                        "exchange_public_token" => await linkclient.ExchangePublicToken(getpostdata<LinkResult>()),
                         "info" => await linkclient.Info(),
                         _ => throw new NotImplementedException()
                     };

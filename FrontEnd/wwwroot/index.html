@@ -1,9 +1,13 @@
 <html>
 <head>
     <title>Plaid Quickstart for WPF</title>
+    <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
     <script>
-        console.log('index.html inline js starting');
+        $(document).ready(function () {
+            $('#link-account').click(() => { launchLink(false); });
+            console.log('Loaded: OK');
+        });
 
         // Check whether account is connected
         const getInfo = async function () {
@@ -33,6 +37,88 @@
                 })
                 .catch(reason => {
                     console.log(`Info FAILED: ${reason}`);
+                });
+        };
+
+        // Grab a Link token to initialize Link
+        const createLinkToken = async function (fix) {
+            const res = await fetch(`/api/create_link_token?fix=${fix}`);
+            const linkToken = await res.json();
+            console.log(`Link token: ${JSON.stringify(linkToken)}`);
+            return linkToken;
+        };
+
+        // Initialize Link
+        const launchLink = async function (fix) {
+            console.log(`Link: Launch fix=${fix}`);
+            const handler = Plaid.create({
+                token: await createLinkToken(fix),
+                onSuccess: async (publicToken, metadata) => {
+                    console.log("Link: OK");
+                    console.log("Metadata:", JSON.stringify(metadata));
+                    console.log("Public Token:", JSON.stringify(publicToken));
+
+                    // Needs to match C# Shared.LinkResult class
+                    var result = {
+                        ok: true,
+                        public_token: publicToken,
+                        error: null,
+                        metadata: metadata
+                    };
+
+                    await exchangeToken(result);
+                },
+                onEvent: (eventName, metadata) => {
+                    console.log("Event:", eventName);
+                    console.log("Metadata:", JSON.stringify(metadata));
+                },
+                onExit: (error, metadata) => {
+                    console.log("ERROR:", JSON.stringify(error));
+                    console.log("Metadata:", JSON.stringify(metadata));
+                },
+            });
+            handler.open();
+        }
+
+        // Exchange token and update info
+        // Check whether account is connected
+        const exchangeToken = async function (token) {
+            fetch("/api/exchange_public_token", {
+                method: "POST",
+                body: JSON.stringify(token),
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            })
+                .then(async (response) => {
+                    if (response.status < 400) {
+                        const info = await response.json();
+                        console.log(`Exchange OK: ${JSON.stringify(info)}`);
+                        if (info.AccessToken !== null) {
+                            $('#link-done').show();
+                            $('#link-ready').hide();
+                            $('#loading').hide();
+                            $('#creds-item-id').text(info.ItemId);
+                            $('#creds-access-token').text(info.AccessToken);
+                            $('#link-done').show();
+                            $('#response').text(JSON.stringify(info, null, 2));
+                            console.log("Exchange: OK")
+                        }
+                        else {
+                            console.log(`Exchange FAILED: No access token returned`);
+                            $('#loading').show();
+                            $('#loading').text(`LINK EXCHANGE FAILED: No access token returned. Please check server logs for details.`);
+                            $('#link-ready').show();
+                        }
+                    }
+                    else {
+                        console.log(`Exchange FAILED Status: ${response.status}`);
+                        $('#loading').text(`LINK EXCHANGE FAILED Status:${response.status}. Please check server logs for details.`);
+                    }
+
+                })
+                .catch(reason => {
+                    console.log(`Exchange FAILED: ${reason}`);
                 });
         };
 
