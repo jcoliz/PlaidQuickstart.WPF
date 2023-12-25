@@ -1,12 +1,18 @@
 ﻿using CefSharp;
 using CefSharp.Wpf;
+using Core.Models;
+using Core.Providers;
 using FrontEnd.Ui;
+using Going.Plaid;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using PlaidProviders;
 using System.IO;
 using System.Windows;
+
+using Environment = System.Environment;
 
 namespace FrontEnd.Main;
 /// <summary>
@@ -55,6 +61,10 @@ public partial class App : Application
 
                 // Only used for Standalone client
                 services.AddSingleton<LinkSchemeHandlerFactory>();
+                services.AddScoped<LinkResourceHandler>();
+                services.Configure<PlaidCredentials>(context.Configuration.GetSection(PlaidCredentials.SectionKey));
+                services.AddSingleton<PlaidClient>();
+                services.AddSingleton<ILinkClient, LinkClient>();
             })
             .ConfigureLogging((context, logging) =>
             {

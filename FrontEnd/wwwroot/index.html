@@ -1,8 +1,44 @@
 <html>
 <head>
     <title>Plaid Quickstart for WPF</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+    <script>
+        console.log('index.html inline js starting');
+
+        // Check whether account is connected
+        const getInfo = async function () {
+            fetch("/api/info")
+                .then(async (response) => {
+                    if (response.status < 400) {
+                        const info = await response.json();
+                        console.log(`Info OK: ${JSON.stringify(info)}`);
+                        $('#response').text(JSON.stringify(info, null, 2));
+                    }
+                    else {
+                        console.log(`Info FAILED: ${response.status}`);
+                        $('#response').text(`LINK FAILED Status:${response.status}. Please check server logs for details.`);
+                    }
+
+                })
+                .catch(reason => {
+                    console.log(`Info FAILED: ${reason}`);
+                });
+        };
+
+        getInfo();
+    </script>
 </head>
 <body>
     <h2>Plaid Quickstart</h2>
+    <div>
+        <pre id="response"
+             style="
+            margin-left: 10px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            font-size: 14px;
+            background: #F6F6F6;
+          "></pre>
+    </div>
 </body>
 </html>
