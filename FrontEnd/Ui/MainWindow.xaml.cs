@@ -23,33 +23,12 @@ public partial class MainWindow : Window
         InitializeComponent();
         DataContext = viewModel;
 
-        // Attach to browser console messages
-        // e.g. any `console.log()` calls will send output here
-        Browser.ConsoleMessage += Browser_ConsoleMessage;
     }
 
-    /// <summary>
-    /// Proecess browser console messages
-    /// </summary>
-    /// <remarks>
-    /// Simply redirects them to the system logger.
-    /// May be worth considering sending them to the server for logging
-    /// </remarks>
-    private void Browser_ConsoleMessage(object? _, ConsoleMessageEventArgs e)
+    private async void LinkButton_Click(object sender, RoutedEventArgs e)
     {
-        _logger.Log(
-            e.Level switch
-            {
-                CefSharp.LogSeverity.Error => LogLevel.Error,
-                CefSharp.LogSeverity.Warning => LogLevel.Warning,
-                CefSharp.LogSeverity.Verbose => LogLevel.Debug,
-                CefSharp.LogSeverity.Fatal => LogLevel.Critical,
-                _ => LogLevel.Information
-            },
-            "Browser: {message}, source:{source} ({line})",
-            e.Message,
-            e.Source,
-            e.Line
-        );
+        var linkwindow = new LinkWindow((DataContext as MainViewModel)!, _logger);
+        linkwindow!.Owner = this;
+        linkwindow.ShowDialog();
     }
 }

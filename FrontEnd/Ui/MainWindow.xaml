@@ -8,8 +8,20 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <cef:ChromiumWebBrowser x:Name="Browser"
-                        Address="{Binding WebAddress}">
-        </cef:ChromiumWebBrowser>
+        <TabControl>
+            <TabItem Header="Accounts">
+                <StackPanel>
+                    <Button Click="LinkButton_Click">Link</Button>
+                    <Button Command="{Binding FetchBalancesCommand}">Fetch</Button>
+                    <DataGrid Name="dgAccounts" ItemsSource="{Binding BalancesData}" IsReadOnly="True"></DataGrid>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Transactions">
+                <StackPanel>
+                    <Button Command="{Binding FetchTransactionsCommand}">Fetch</Button>
+                    <DataGrid Name="dgTransactions" ItemsSource="{Binding TransactionsData}" IsReadOnly="True"></DataGrid>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
