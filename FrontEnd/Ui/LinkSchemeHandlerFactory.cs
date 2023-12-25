@@ -83,9 +83,13 @@ public class LinkResourceHandler(ILogger<LinkResourceHandler> logger, ILinkClien
                     {
                         var val = query[key];
                         if (val is not null)
+                        {
                             return (T)Convert.ChangeType(val, typeof(T));
+                        }
                         else
+                        {
                             return default(T);
+                        }
                     }
 
                     object? response = endpoint switch
