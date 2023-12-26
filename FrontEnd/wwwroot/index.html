@@ -11,7 +11,7 @@
 
         // Check whether account is connected
         const getInfo = async function () {
-            fetch("/api/info")
+            fetch("/api/Link/Info")
                 .then(async (response) => {
                     if (response.status < 400) {
                         const info = await response.json();
@@ -42,7 +42,7 @@
 
         // Grab a Link token to initialize Link
         const createLinkToken = async function (fix) {
-            const res = await fetch(`/api/create_link_token?fix=${fix}`);
+            const res = await fetch(`/api/Link/CreateLinkToken?fix=${fix}`);
             const linkToken = await res.json();
             console.log('Create token: OK', JSON.stringify(linkToken));
             return linkToken;
@@ -79,7 +79,7 @@
         // Exchange token and update info
         // Check whether account is connected
         const exchangeToken = async function (token) {
-            fetch("/api/exchange_public_token", {
+            fetch("/api/Link/ExchangePublicToken", {
                 method: "POST",
                 body: JSON.stringify(token),
                 headers: {

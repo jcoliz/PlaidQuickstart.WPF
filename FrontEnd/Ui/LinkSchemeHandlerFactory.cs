@@ -21,7 +21,7 @@ namespace FrontEnd.Ui;
 public class LinkSchemeHandlerFactory(ILogger<LinkSchemeHandlerFactory> logger, LinkResourceHandler linkResourceHandler) : ISchemeHandlerFactory
 {
     public static string Scheme => "https";
-    public static string Host => "localhost";
+    public static string Host => "standalone";
 
     public IResourceHandler Create(IBrowser browser, IFrame frame, string schemeName, IRequest request)
     {
@@ -41,8 +41,8 @@ public class LinkSchemeHandlerFactory(ILogger<LinkSchemeHandlerFactory> logger, 
             return ResourceHandler.FromStream(Application.ResourceAssembly.GetManifestResourceStream(found.First()));
         }
 
-        // Is this an "/api" call?
-        if (fileName.StartsWith("/api/"))
+        // Is this a Link API call?
+        if (fileName.StartsWith("/api/link/"))
         {
             return linkResourceHandler;
         }
@@ -62,7 +62,7 @@ public class LinkResourceHandler(ILogger<LinkResourceHandler> logger, ILinkClien
     {
         var uri = new Uri(request.Url);
         var segments = uri.AbsolutePath.ToLowerInvariant().Split('/');
-        var endpoint = segments[2];
+        var endpoint = segments[3];
 
         _ = Task.Run(async () =>
         {
@@ -94,8 +94,8 @@ public class LinkResourceHandler(ILogger<LinkResourceHandler> logger, ILinkClien
 
                     object? response = endpoint switch
                     {
-                        "create_link_token" => await linkclient.CreateLinkToken(fix: getquery<bool>("fix")),
-                        "exchange_public_token" => await linkclient.ExchangePublicToken(getpostdata<LinkResult>()),
+                        "createlinktoken" => await linkclient.CreateLinkToken(fix: getquery<bool>("fix")),
+                        "exchangepublictoken" => await linkclient.ExchangePublicToken(getpostdata<LinkResult>()),
                         "info" => await linkclient.Info(),
                         _ => throw new NotImplementedException()
                     };
