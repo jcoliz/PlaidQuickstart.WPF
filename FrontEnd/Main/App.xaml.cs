@@ -44,7 +44,7 @@ public partial class App : Application
                 configurationBuilder.SetBasePath(context.HostingEnvironment.ContentRootPath);
 
                 // Add an application-specific config file
-                configurationBuilder.AddJsonFile("appsettings.json", optional: false);
+                configurationBuilder.AddYamlFile("appsettings.yaml", optional: false);
 
                 // Add a dedicated config file for Plaid secrets
                 // Only used when running as standalone client

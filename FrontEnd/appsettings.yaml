@@ -1,0 +1,15 @@
+﻿Ui:
+#  WebAddress: https://standalone/index.html
+  WebAddress: https://localhost:7280/index.html
+
+Logging:
+  LogLevel:
+    Default: Information
+    Microsoft: Warning
+    Microsoft.Hosting.LifeTime: Information
+  Console:
+    FormatterName: systemd
+    FormatterOptions:
+      IncludeScopes: false
+      UseUtcTimestamp: true
+      TimestampFormat: " [ dd/MM/yyyy HH:mm:ss ] "
