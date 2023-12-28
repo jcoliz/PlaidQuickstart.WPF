@@ -6,7 +6,7 @@
         xmlns:cef="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         xmlns:local="clr-namespace:FrontEnd.Ui"
         mc:Ignorable="d"
-        Title="LinkWindow" Height="800" Width="500">
+        Title="Plaid Link" Height="800" Width="500">
     <Grid>
         <cef:ChromiumWebBrowser x:Name="Browser"
                         Address="{Binding WebAddress}">
