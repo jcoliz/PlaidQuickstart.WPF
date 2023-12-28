@@ -20,7 +20,7 @@ namespace PlaidProviders;
 /// <param name="logger">Where to log</param>
 /// <param name="credentials">Credentials of logged-in user</param>
 /// <param name="client">Client to use for connection</param>
-public class LinkProvider(ILogger<LinkProvider> logger, IOptions<PlaidCredentials> credentials, PlaidClient client) : ILinkClient
+public class LinkProvider(ILogger<LinkProvider> logger, IOptions<AppSettings> appSettings, IOptions<PlaidCredentials> credentials, PlaidClient client) : ILinkClient
 {
     public async Task<string> CreateLinkToken(bool? fix)
     {
@@ -30,9 +30,9 @@ public class LinkProvider(ILogger<LinkProvider> logger, IOptions<PlaidCredential
         {
             AccessToken = fix == true ? credentials.Value!.AccessToken : null,
             User = new LinkTokenCreateRequestUser { ClientUserId = Guid.NewGuid().ToString(), },
-            ClientName = "Quickstart for WPF",
+            ClientName = appSettings?.Value?.Name ?? ".NET Link Provider",
             Products = credentials.Value!.Products!.Split(',').Select(p => Enum.Parse<Products>(p, true)).ToArray(),
-            Language = Enum.Parse<Language>(credentials.Value!.Language ?? "English"),
+            Language = Enum.Parse<Language>(credentials.Value?.Language ?? "English"),
             CountryCodes = credentials.Value!.CountryCodes!.Split(',').Select(p => Enum.Parse<CountryCode>(p, true)).ToArray(),
         };
         var response = await client.LinkTokenCreateAsync(request);

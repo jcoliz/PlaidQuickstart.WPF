@@ -1,6 +1,11 @@
-﻿Ui:
-#  WebAddress: https://standalone/index.html
-  WebAddress: https://localhost:7280/index.html
+﻿App:
+  Name: Plaid Quickstart for WPF
+
+Ui:
+  # Use this address to run as standalone client
+  WebAddress: https://standalone/index.html
+  # Otherwise give the address where we should look for the backend
+  # WebAddress: https://localhost:7280/index.html
 
 Logging:
   LogLevel:
