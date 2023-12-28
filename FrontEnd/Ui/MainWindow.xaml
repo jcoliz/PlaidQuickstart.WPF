@@ -6,7 +6,7 @@
         xmlns:cef="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         xmlns:local="clr-namespace:FrontEnd.Ui"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="{Binding AppName}" Height="450" Width="800">
     <Grid>
         <TabControl>
             <TabItem Header="Accounts">

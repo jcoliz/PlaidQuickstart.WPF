@@ -12,7 +12,13 @@ namespace FrontEnd.Ui;
 /// View Model for the main interaction window
 /// </summary>
 /// <param name="fetchClient">Client we will use to fetch bank data</param>
-public class MainViewModel(ILogger<MainViewModel> logger, IOptions<UiSettings> settings, IFetchClient fetchClient) : INotifyPropertyChanged
+public class MainViewModel(
+    ILogger<MainViewModel> logger, 
+    IOptions<UiSettings> settings, 
+    IOptions<AppSettings> appSettings, 
+    IFetchClient fetchClient
+) 
+    : INotifyPropertyChanged
 {
     /// <summary>
     /// Web location of the home page
@@ -70,6 +76,11 @@ public class MainViewModel(ILogger<MainViewModel> logger, IOptions<UiSettings> s
     {
         get; private set;
     }
+
+    /// <summary>
+    /// Display name of application
+    /// </summary>
+    public string AppName => appSettings.Value?.Name ?? nameof(MainViewModel);
 
     /// <summary>
     /// Do the work of feteching balances
