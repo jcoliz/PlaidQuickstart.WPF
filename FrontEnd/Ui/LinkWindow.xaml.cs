@@ -32,6 +32,9 @@ public partial class LinkWindow : Window
         // Attach to browser console messages
         // e.g. any `console.log()` calls will send output here
         Browser.ConsoleMessage += Browser_ConsoleMessage;
+
+        // Attach to posted messages
+        Browser.JavascriptMessageReceived += Browser_JavascriptMessageReceived;
     }
 
     /// <summary>
@@ -59,4 +62,21 @@ public partial class LinkWindow : Window
         );
     }
 
+    /// <summary>
+    /// Receive message from browser
+    /// </summary>
+    /// <remarks>
+    /// All messages mean we should close the window
+    /// </remarks>
+    /// <param name="sender">Browser which sent it</param>
+    /// <param name="e">Event details</param>
+    private void Browser_JavascriptMessageReceived(object? sender, JavascriptMessageReceivedEventArgs e)
+    {
+        _logger.LogInformation("Browser: Received message {message}", (bool)e.Message);
+
+        //This event is called on a CEF Thread, to access your UI thread
+        //use Control.BeginInvoke/Dispatcher.BeginInvoke
+
+        Dispatcher.BeginInvoke(() => Close());
+    }
 }

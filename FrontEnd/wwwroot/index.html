@@ -34,6 +34,7 @@
                 },
                 onExit: (error, metadata) => {
                     console.error("Link: ERROR", JSON.stringify(error), JSON.stringify(metadata));
+                    CefSharp.PostMessage(false);
                 },
             });
             handler.open();
@@ -52,20 +53,24 @@
                 .then(async (response) => {
                     if (response.status < 400) {
                         const info = await response.json();
-                        console.log('Exchange: Received', JSON.stringify(info));
+                        console.debug('Exchange: Received', JSON.stringify(info));
                         if (info.AccessToken !== null) {
                             console.log("Exchange: OK");
+                            CefSharp.PostMessage(true);
                         }
                         else {
                             console.error(`Exchange: FAILED. No access token returned`);
+                            CefSharp.PostMessage(false);
                         }
                     }
                     else {
                         console.error('Exchange: FAILED Status', response.status);
+                        CefSharp.PostMessage(false);
                     }
                 })
                 .catch(reason => {
                     console.error('Exchange: FAILED', JSON.stringify(reason));
+                    CefSharp.PostMessage(false);
                 });
         };
 
