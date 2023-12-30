@@ -57,6 +57,7 @@ public partial class App : Application
             {                
                 services.AddSingleton<MainWindow>();
                 services.AddSingleton<MainViewModel>();
+                services.AddScoped<LinkWindow>();
                 services.Configure<UiSettings>(context.Configuration.GetSection(UiSettings.Section));
 
                 // Only used for Standalone client

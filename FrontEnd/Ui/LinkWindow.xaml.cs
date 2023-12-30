@@ -22,9 +22,9 @@ namespace FrontEnd.Ui;
 /// </summary>
 public partial class LinkWindow : Window
 {
-    private readonly ILogger<MainWindow> _logger;
+    private readonly ILogger<LinkWindow> _logger;
 
-    public LinkWindow(MainViewModel viewModel, ILinkClient linkClient, ILogger<MainWindow> logger)
+    public LinkWindow(MainViewModel viewModel, ILinkClient linkClient, ILogger<LinkWindow> logger)
     {
         _logger = logger;
 
