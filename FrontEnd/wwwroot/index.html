@@ -19,33 +19,27 @@
                         metadata: metadata
                     };
 
-                    await exchangeToken(result);
+                    linkClient.exchangePublicToken(result)
+                        .then(info => {
+                            console.debug('Exchange: Received', JSON.stringify(info));
+                            console.log("Exchange: OK");
+                            CefSharp.PostMessage(true);
+                        })
+                        .catch(reason => {
+                            console.error('Exchange: FAILED', JSON.stringify(reason));
+                            CefSharp.PostMessage(false);
+                        });
                 },
                 onEvent: (eventName, metadata) => {
                     console.debug("Link: Event", eventName, JSON.stringify(metadata));
                 },
                 onExit: (error, metadata) => {
-                    console.error("Link: ERROR", JSON.stringify(error), JSON.stringify(metadata));
+                    console.error("Link: FAILED", JSON.stringify(error), JSON.stringify(metadata));
                     CefSharp.PostMessage(false);
                 },
             });
             handler.open();
         }
-
-        // Exchange token and update info
-        // Check whether account is connected
-        const exchangeToken = async function (token) {
-            linkClient.exchangePublicToken(token)
-                .then(info => {
-                    console.debug('Exchange: Received', JSON.stringify(info));
-                    console.log("Exchange: OK");
-                    CefSharp.PostMessage(true);
-                })
-                .catch(reason => {
-                    console.error('Exchange: FAILED', JSON.stringify(reason));
-                    CefSharp.PostMessage(false);
-                });
-        };
 
         launchLink();
     </script>
