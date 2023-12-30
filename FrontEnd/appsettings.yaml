@@ -12,6 +12,8 @@ Logging:
     Default: Information
     Microsoft: Warning
     Microsoft.Hosting.LifeTime: Information
+    # Enable this to get lots of debugging information during Link session
+    FrontEnd.Ui: Debug
   Console:
     FormatterName: systemd
     FormatterOptions:

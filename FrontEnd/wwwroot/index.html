@@ -3,14 +3,6 @@
     <title>Plaid Quickstart for WPF</title>
     <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
     <script>
-        // Grab a Link token to initialize Link
-        const createLinkToken = async function () {
-            const res = await fetch(`/api/Link/CreateLinkToken`);
-            const linkToken = await res.json();
-            console.log('Create token: OK', JSON.stringify(linkToken));
-            return linkToken;
-        };
-
         // Initialize Link
         const launchLink = async function () {
             console.debug(`Link: Launch`);
@@ -43,30 +35,11 @@
         // Exchange token and update info
         // Check whether account is connected
         const exchangeToken = async function (token) {
-            fetch("/api/Link/ExchangePublicToken", {
-                method: "POST",
-                body: JSON.stringify(token),
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            })
-                .then(async (response) => {
-                    if (response.status < 400) {
-                        const info = await response.json();
-                        console.debug('Exchange: Received', JSON.stringify(info));
-                        if (info.AccessToken !== null) {
-                            console.log("Exchange: OK");
-                            CefSharp.PostMessage(true);
-                        }
-                        else {
-                            console.error(`Exchange: FAILED. No access token returned`);
-                            CefSharp.PostMessage(false);
-                        }
-                    }
-                    else {
-                        console.error('Exchange: FAILED Status', response.status);
-                        CefSharp.PostMessage(false);
-                    }
+            linkClient.exchangePublicToken(token)
+                .then(info => {
+                    console.debug('Exchange: Received', JSON.stringify(info));
+                    console.log("Exchange: OK");
+                    CefSharp.PostMessage(true);
                 })
                 .catch(reason => {
                     console.error('Exchange: FAILED', JSON.stringify(reason));
@@ -74,7 +47,7 @@
                 });
         };
 
-        launchLink(false);
+        launchLink();
     </script>
 </head>
 <body>
