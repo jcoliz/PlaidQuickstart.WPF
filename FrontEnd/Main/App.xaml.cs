@@ -88,6 +88,7 @@ public partial class App : Application
         // Set up CefSharp
         //
 
+        CefSharpSettings.ConcurrentTaskExecution = true;
         var settings = new CefSettings()
         {
             //By default CefSharp will use an in-memory cache, you need to specify a Cache Folder to persist data

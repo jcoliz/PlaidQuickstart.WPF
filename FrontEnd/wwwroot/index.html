@@ -15,7 +15,7 @@
         const launchLink = async function () {
             console.debug(`Link: Launch`);
             const handler = Plaid.create({
-                token: await createLinkToken(),
+                token: await linkClient.createLinkToken(),
                 onSuccess: async (publicToken, metadata) => {
                     console.log("Link: OK", JSON.stringify(publicToken), JSON.stringify(metadata));
 

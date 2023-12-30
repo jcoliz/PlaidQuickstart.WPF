@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using CefSharp;
+using CefSharp.Wpf;
+using Core.Providers;
 using Microsoft.Extensions.Logging;
 
 namespace FrontEnd.Ui;
@@ -22,7 +24,7 @@ public partial class LinkWindow : Window
 {
     private readonly ILogger<MainWindow> _logger;
 
-    public LinkWindow(MainViewModel viewModel, ILogger<MainWindow> logger)
+    public LinkWindow(MainViewModel viewModel, ILinkClient linkClient, ILogger<MainWindow> logger)
     {
         _logger = logger;
 
@@ -35,6 +37,14 @@ public partial class LinkWindow : Window
 
         // Attach to posted messages
         Browser.JavascriptMessageReceived += Browser_JavascriptMessageReceived;
+
+        // Register link client for JS
+        Browser.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
+        Browser.JavascriptObjectRepository.Register(
+            "linkClient",
+            linkClient,             
+            options: BindingOptions.DefaultBinder
+        );
     }
 
     /// <summary>
