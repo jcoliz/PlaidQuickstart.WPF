@@ -22,13 +22,13 @@ namespace PlaidProviders;
 /// <param name="client">Client to use for connection</param>
 public class LinkProvider(ILogger<LinkProvider> logger, IOptions<AppSettings> appSettings, IOptions<PlaidCredentials> credentials, PlaidClient client) : ILinkClient
 {
-    public async Task<string> CreateLinkToken(bool? fix)
+    public async Task<string> CreateLinkToken()
     {
         CheckCredentials();
 
         var request = new LinkTokenCreateRequest()
         {
-            AccessToken = fix == true ? credentials.Value!.AccessToken : null,
+            AccessToken = credentials.Value!.AccessToken,
             User = new LinkTokenCreateRequestUser { ClientUserId = Guid.NewGuid().ToString(), },
             ClientName = appSettings?.Value?.Name ?? ".NET Link Provider",
             Products = credentials.Value!.Products!.Split(',').Select(p => Enum.Parse<Products>(p, true)).ToArray(),

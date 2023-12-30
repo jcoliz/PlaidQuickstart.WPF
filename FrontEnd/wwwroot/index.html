@@ -4,18 +4,18 @@
     <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
     <script>
         // Grab a Link token to initialize Link
-        const createLinkToken = async function (fix) {
-            const res = await fetch(`/api/Link/CreateLinkToken?fix=${fix}`);
+        const createLinkToken = async function () {
+            const res = await fetch(`/api/Link/CreateLinkToken`);
             const linkToken = await res.json();
             console.log('Create token: OK', JSON.stringify(linkToken));
             return linkToken;
         };
 
         // Initialize Link
-        const launchLink = async function (fix) {
-            console.debug(`Link: Launch fix=${fix}`);
+        const launchLink = async function () {
+            console.debug(`Link: Launch`);
             const handler = Plaid.create({
-                token: await createLinkToken(fix),
+                token: await createLinkToken(),
                 onSuccess: async (publicToken, metadata) => {
                     console.log("Link: OK", JSON.stringify(publicToken), JSON.stringify(metadata));
 

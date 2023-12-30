@@ -7,7 +7,7 @@ namespace Core.Providers;
 /// </summary>
 public interface ILinkClient
 {
-    Task<string> CreateLinkToken(bool? fix);
+    Task<string> CreateLinkToken();
 
     Task<PlaidCredentials> ExchangePublicToken(LinkResult link);
 
