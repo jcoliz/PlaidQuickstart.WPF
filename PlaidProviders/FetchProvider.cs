@@ -29,11 +29,12 @@ public class FetchProvider: IFetchClient
         _logger = logger;
         _credentials = credentials.Value;
         _client = client;
-        _client.AccessToken = _credentials.AccessToken;
     }
 
     public async Task<WireDataTable> Balance()
     {
+        CheckCredentialsLoggedIn();
+
         var request = new AccountsBalanceGetRequest();
 
         var response = await _client.AccountsBalanceGetAsync(request);
@@ -64,6 +65,8 @@ public class FetchProvider: IFetchClient
 
     public async Task<WireDataTable> Transactions()
     {
+        CheckCredentialsLoggedIn();
+
         // Set cursor to empty to receive all historical updates
         var cursor = string.Empty;
 
@@ -133,6 +136,21 @@ public class FetchProvider: IFetchClient
         _logger.LogError(result, "{caller}: FAILED", callerName);
 
         return result;
+    }
+
+    private void CheckCredentialsLoggedIn()
+    {
+        if (_credentials == null)
+        {
+            throw new ArgumentNullException(nameof(_credentials), "Please supply Plaid credentials in .NET configuration");
+        }
+        if (_credentials.AccessToken == null)
+        {
+            throw new ArgumentNullException(nameof(_credentials.AccessToken), "Must be logged in to complete this operation");
+        }
+
+        // Set to latest access token, in case it has changed
+        _client.AccessToken = _credentials.AccessToken;
     }
 }
 
