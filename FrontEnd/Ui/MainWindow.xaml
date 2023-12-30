@@ -9,10 +9,18 @@
         Title="{Binding AppName}" Height="450" Width="800">
     <Grid>
         <TabControl>
+            <TabItem Header="Link">
+                <StackPanel>
+                    <TextBlock Margin="10,10,10,0">Plaid Link Connection</TextBlock>
+                    <TextBlock Margin="10,10,10,0">Status: Connected</TextBlock>
+                    <TextBlock Margin="10,10,10,0">Status: Disconnected</TextBlock>
+                    <Button Click="LinkButton_Click" Padding="5" Margin="10,10,10,0">Connect</Button>
+                    <Button Click="LinkButton_Click" Padding="5" Margin="10">Update</Button>
+                </StackPanel>
+            </TabItem>
             <TabItem Header="Accounts">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="5">
-                        <Button Click="LinkButton_Click" Padding="5" Margin="0,0,5,0">Link</Button>
                         <Button Command="{Binding FetchBalancesCommand}" Padding="5">Fetch</Button>
                     </StackPanel>
                     <DataGrid Name="dgAccounts" ItemsSource="{Binding BalancesData}" IsReadOnly="True"></DataGrid>
@@ -21,7 +29,6 @@
             <TabItem Header="Transactions">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="5">
-                        <Button Click="LinkButton_Click" Padding="5" Margin="0,0,5,0">Link</Button>
                         <Button Command="{Binding FetchTransactionsCommand}" Padding="5">Fetch</Button>
                     </StackPanel>
                     <DataGrid Name="dgTransactions" ItemsSource="{Binding TransactionsData}" IsReadOnly="True"></DataGrid>
