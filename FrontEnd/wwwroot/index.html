@@ -22,25 +22,23 @@
                     linkClient.exchangePublicToken(result)
                         .then(info => {
                             console.debug('Exchange: Received', JSON.stringify(info));
-                            console.log("Exchange: OK");
-                            CefSharp.PostMessage(true);
+                            pageStatus.linkSuccess();
                         })
                         .catch(reason => {
-                            console.error('Exchange: FAILED', JSON.stringify(reason));
-                            CefSharp.PostMessage(false);
+                            pageStatus.linkFailed(JSON.stringify(reason));
                         });
                 },
                 onEvent: (eventName, metadata) => {
                     console.debug("Link: Event", eventName, JSON.stringify(metadata));
                 },
                 onExit: (error, metadata) => {
-                    console.error("Link: FAILED", JSON.stringify(error), JSON.stringify(metadata));
-                    CefSharp.PostMessage(false);
+                    pageStatus.linkFailed(JSON.stringify(metadata));
                 },
             });
             handler.open();
         }
 
+        pageStatus.linkRunning();
         launchLink();
     </script>
 </head>
