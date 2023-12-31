@@ -13,7 +13,7 @@ Logging:
     Microsoft: Warning
     Microsoft.Hosting.LifeTime: Information
     # Set this to `Debug` to get lots of debugging information during Link session
-    FrontEnd.Ui: Debug
+    # FrontEnd.Ui: Debug
   Console:
     FormatterName: systemd
     FormatterOptions:

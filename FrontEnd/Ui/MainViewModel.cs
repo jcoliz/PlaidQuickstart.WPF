@@ -1,12 +1,11 @@
-﻿using System.ComponentModel;
-using System.Data;
-using System.Windows.Input;
-using System.Windows.Threading;
-using CefSharp;
+﻿using CefSharp;
 using Core.Models;
 using Core.Providers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.ComponentModel;
+using System.Data;
+using System.Windows.Input;
 
 namespace FrontEnd.Ui;
 
@@ -23,29 +22,7 @@ public class MainViewModel(
 )
     : INotifyPropertyChanged, IPageStatus
 {
-    /// <summary>
-    /// Web location of the home page
-    /// </summary>
-    public Uri? WebAddress
-    {
-        get
-        {
-            var web_address = settings.Value?.WebAddress;
-
-            if (web_address is null)
-            {
-                logger.LogError("Must set WebAddress in UI settings");
-                return null;
-            }
-            else
-            {
-                var result = new Uri(web_address);
-                logger.LogInformation("Using web address {uri}", result);
-                return result;
-            }
-        }
-    }
-
+    #region Events
     /// <summary>
     /// Fires when something has changed
     /// </summary>
@@ -60,6 +37,10 @@ public class MainViewModel(
     /// Fires when Link is complete
     /// </summary>
     public event EventHandler? LinkFlowFinished;
+
+    #endregion
+
+    #region Commands
 
     /// <summary>
     /// Initiate fetching of balances
@@ -90,6 +71,33 @@ public class MainViewModel(
     /// </summary>
     public ICommand StartLinkCommand => _StartLinkCommand ??= new CommandHandler(_ => LaunchLink(), () => true);
     private ICommand? _StartLinkCommand;
+
+    #endregion
+
+    #region Properties
+
+    /// <summary>
+    /// Web location of the home page
+    /// </summary>
+    public Uri? WebAddress
+    {
+        get
+        {
+            var web_address = settings.Value?.WebAddress;
+
+            if (web_address is null)
+            {
+                logger.LogError("Must set WebAddress in UI settings");
+                return null;
+            }
+            else
+            {
+                var result = new Uri(web_address);
+                logger.LogInformation("Using web address {uri}", result);
+                return result;
+            }
+        }
+    }
 
     /// <summary>
     /// Whether we currently KNOW if we're logged in or not
@@ -186,11 +194,109 @@ public class MainViewModel(
     /// </summary>
     public string AppName => appSettings.Value?.Name ?? nameof(MainViewModel);
 
+    #endregion
+
+    #region Methods
+
+    /// <summary>
+    /// Process browser console messages
+    /// </summary>
+    /// <remarks>
+    /// Simply redirects them to the system logger.
+    /// May be worth considering sending them to the server for logging
+    /// TODO: Make into an ICommand
+    /// </remarks>
+    public void LogBrowserConsoleMessage(ConsoleMessageEventArgs e)
+    {
+        logger.Log(
+            e.Level switch
+            {
+                CefSharp.LogSeverity.Error => LogLevel.Error,
+                CefSharp.LogSeverity.Warning => LogLevel.Warning,
+                CefSharp.LogSeverity.Verbose => LogLevel.Debug,
+                CefSharp.LogSeverity.Fatal => LogLevel.Critical,
+                _ => LogLevel.Information
+            },
+            "Browser: {message}, source:{source} ({line})",
+            e.Message,
+            e.Source,
+            e.Line
+        );
+
+        if (e.Level == LogSeverity.Error)
+        {
+            LastErrorMessage = e.Message;
+        }
+    }
+
+    /// <summary>
+    /// Update whether we are logged in or not
+    /// </summary>
+    /// <returns>
+    /// TODO: THis should be called from constructor, and then made private
+    /// </returns>
+
     public async Task UpdateLoggedInState()
     {
         IsLoggedIn = await linkClient.IsLoggedIn();
         IsLoggedInStatusKnown = true;
     }
+
+    #endregion
+
+    #region IPageStatus
+
+    // NOTE: Would prefer for these to be direct implementations of the interface,
+    // e.g. "IPageStatus.LinkLoading", however CEF object registration doesn't
+    // deal with interfaces correctly.
+
+    /// <summary>
+    /// Report that Link is loading now
+    /// </summary>
+    public void LinkLoading()
+    {
+        logger.LogInformation("Page Status: Loading");
+
+        // Here we could display an indication to the user
+    }
+    /// <summary>
+    /// Report that Link is running now
+    /// </summary>
+    public void LinkRunning()
+    {
+        logger.LogInformation("Page Status: Running");
+
+        // Here we could display an indication to the user
+    }
+    /// <summary>
+    /// Report that Link has completed successfully now
+    /// </summary>
+    public void LinkSuccess()
+    {
+        logger.LogInformation("Page Status: Success");
+
+        LastErrorMessage = null;
+
+        _ = UpdateLoggedInState();
+
+        LinkFlowFinished?.Invoke(this, new EventArgs());
+    }
+    /// <summary>
+    /// Report that Link has failed now
+    /// </summary>
+    public void LinkFailed(string reason)
+    {
+        logger.LogError("Page Status: Failed {reason}", reason);
+
+        LastErrorMessage = reason;
+
+        _ = UpdateLoggedInState();
+
+        LinkFlowFinished?.Invoke(this, new EventArgs());
+    }
+    #endregion
+
+    #region Internal Operations
 
     /// <summary>
     /// Do the work of feteching balances
@@ -285,82 +391,7 @@ public class MainViewModel(
         LinkFlowStarting?.Invoke(this, new EventArgs());
     }
 
-    /// <summary>
-    /// Process browser console messages
-    /// </summary>
-    /// <remarks>
-    /// Simply redirects them to the system logger.
-    /// May be worth considering sending them to the server for logging
-    /// TODO: Make into an ICommand
-    /// </remarks>
-    public void LogBrowserConsoleMessage(ConsoleMessageEventArgs e)
-    {
-        logger.Log(
-            e.Level switch
-            {
-                CefSharp.LogSeverity.Error => LogLevel.Error,
-                CefSharp.LogSeverity.Warning => LogLevel.Warning,
-                CefSharp.LogSeverity.Verbose => LogLevel.Debug,
-                CefSharp.LogSeverity.Fatal => LogLevel.Critical,
-                _ => LogLevel.Information
-            },
-            "Browser: {message}, source:{source} ({line})",
-            e.Message,
-            e.Source,
-            e.Line
-        );
-
-        if (e.Level == LogSeverity.Error)
-        {
-            LastErrorMessage = e.Message;
-        }
-    }
-
-
-    /// <summary>
-    /// Report that Link is loading now
-    /// </summary>
-    public void LinkLoading()
-    {
-        logger.LogInformation("Page Status: Loading");
-
-        // Here we could display an indication to the user
-    }
-    /// <summary>
-    /// Report that Link is running now
-    /// </summary>
-    public void LinkRunning()
-    {
-        logger.LogInformation("Page Status: Running");
-
-        // Here we could display an indication to the user
-    }
-    /// <summary>
-    /// Report that Link has completed successfully now
-    /// </summary>
-    public void LinkSuccess()
-    {
-        logger.LogInformation("Page Status: Success");
-
-        LastErrorMessage = null;
-
-        _ = UpdateLoggedInState();
-
-        LinkFlowFinished?.Invoke(this, new EventArgs());
-    }
-    /// <summary>
-    /// Report that Link has failed now
-    /// </summary>
-    public void LinkFailed(string reason)
-    {
-        logger.LogError("Page Status: Failed {reason}", reason);
-
-        LastErrorMessage = reason;
-
-        _ = UpdateLoggedInState();
-
-        LinkFlowFinished?.Invoke(this, new EventArgs());
-    }
+    #endregion
 }
 
 internal static class Extensions
