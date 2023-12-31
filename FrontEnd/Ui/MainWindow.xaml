@@ -36,6 +36,14 @@
                     <DataGrid Name="dgTransactions" ItemsSource="{Binding TransactionsData}" IsReadOnly="True"></DataGrid>
                 </StackPanel>
             </TabItem>
+            <TabItem Header="Institutions">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <Button Command="{Binding FetchInstitutionsCommand}" Padding="5">Fetch</Button>
+                    </StackPanel>
+                    <TextBlock Text="{Binding InstitutionsResult}"/>
+                </StackPanel>
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>

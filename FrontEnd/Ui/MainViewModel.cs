@@ -64,8 +64,8 @@ public class MainViewModel(
     /// <summary>
     /// Initiate fetching of transactions
     /// </summary>
-    public ICommand FetchInstutitionsCommand => _FetchInstutitionsCommand ??= new CommandHandler(() => FetchInstutitions(), () => true);
-    private ICommand? _FetchInstutitionsCommand;
+    public ICommand FetchInstitutionsCommand => _FetchInstitutionsCommand ??= new CommandHandler(() => FetchInstitutions(), () => true);
+    private ICommand? _FetchInstitutionsCommand;
 
     /// <summary>
     /// Initiate logging out
@@ -221,14 +221,14 @@ public class MainViewModel(
     /// <summary>
     /// Do the work of fetching institutions
     /// </summary>
-    protected async void FetchInstutitions()
+    protected async void FetchInstitutions()
     {
         try
         {
+            InstitutionsResult = $"Fetching...";
             var data = await fetchClient!.Institutions();
             var num_rows = data.Rows.Length;
             InstitutionsResult = $"Fetch OK. {num_rows} rows fetched.";
-
         }
         catch (Exception ex)
         {
