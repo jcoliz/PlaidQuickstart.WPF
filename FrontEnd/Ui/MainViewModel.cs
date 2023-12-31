@@ -62,6 +62,12 @@ public class MainViewModel(
     private ICommand? _FetchTransactionsCommand;
 
     /// <summary>
+    /// Initiate fetching of transactions
+    /// </summary>
+    public ICommand FetchInstutitionsCommand => _FetchInstutitionsCommand ??= new CommandHandler(() => FetchInstutitions(), () => true);
+    private ICommand? _FetchInstutitionsCommand;
+
+    /// <summary>
     /// Initiate logging out
     /// </summary>
     public ICommand LogOutCommand => _LogOutCommand ??= new CommandHandler(() => DoLogOut(), () => true);
@@ -141,6 +147,23 @@ public class MainViewModel(
     }
 
     /// <summary>
+    /// Latest result from institutions fetch
+    /// </summary>
+    public string? InstitutionsResult
+    {
+        get => _InstitutionsResult;
+        set
+        {
+            if (_InstitutionsResult != value)
+            {
+                _InstitutionsResult = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(InstitutionsResult)));
+            }
+        }
+    }
+    private string _InstitutionsResult = "Operation not attempted";
+
+    /// <summary>
     /// Display name of application
     /// </summary>
     public string AppName => appSettings.Value?.Name ?? nameof(MainViewModel);
@@ -192,6 +215,25 @@ public class MainViewModel(
         finally
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TransactionsData)));
+        }
+    }
+
+    /// <summary>
+    /// Do the work of fetching institutions
+    /// </summary>
+    protected async void FetchInstutitions()
+    {
+        try
+        {
+            var data = await fetchClient!.Institutions();
+            var num_rows = data.Rows.Length;
+            InstitutionsResult = $"Fetch OK. {num_rows} rows fetched.";
+
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "FetchInstitutions: FAILED");
+            InstitutionsResult = ex.ToString();
         }
     }
 
