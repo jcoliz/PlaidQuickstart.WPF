@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Core.Models;
 using Core.Providers;
+using Going.Plaid.Institutions;
 
 namespace PlaidProviders;
 
@@ -123,6 +124,70 @@ public class FetchProvider: IFetchClient
         return result;
     }
 
+    public async Task<WireDataTable> Institutions()
+    {
+        if (_credentials == null)
+        {
+            throw new ArgumentNullException(nameof(_credentials), "Please supply Plaid credentials in .NET configuration");
+        }
+
+        // Note that this endpoint does NOT want an access token set on the client
+        _client.AccessToken = null;
+
+        // Accumulated rows received sofar
+        var rows = new List<Row>();
+
+        // How many items to get per call
+        const int chunk_size = 500;
+
+        // Total number of items already fetched
+        var fetched_count = 0;
+
+        // Number of items which need to get fetched
+        var fetch_needed = int.MaxValue;
+
+        while (fetched_count < fetch_needed)
+        {
+            var request = new InstitutionsGetRequest()
+            {
+                Count = chunk_size,
+                Offset = fetched_count,
+                CountryCodes = _credentials.CountryCodes!.Split(',').Select(p => Enum.Parse<CountryCode>(p, true)).ToArray(),
+            };
+
+            var response = await _client.InstitutionsGetAsync(request);
+
+            if (response.Error is not null)
+            {
+                throw Error(response.StatusCode,response.Error);
+            }
+
+            rows.AddRange(
+                response.Institutions
+                .Select(x =>
+                    new Row(
+                        x.Name,
+                        x.InstitutionId,
+                        x.Status?.ToString() ?? "null"
+                    )
+                )
+            );
+
+            fetched_count += response.Institutions.Count;
+            fetch_needed = response.Total;
+        }
+
+        var result = new WireDataTable
+        {
+            Columns = ColumnsFrom("Name", "Id", "Status"),
+            Rows = [.. rows]
+        };
+
+        _logger.LogInformation("Institutions: OK {num} rows", result.Rows.Length);
+
+        return result;
+    }
+
     private static Column[] ColumnsFrom(params string[] cols) =>
         cols.Select(x =>
             {
@@ -134,6 +199,14 @@ public class FetchProvider: IFetchClient
     {
         var result = new PlaidServiceException((int)HttpStatusCode.BadRequest, error);
         _logger.LogError(result, "{caller}: FAILED", callerName);
+
+        return result;
+    }
+
+    private PlaidServiceException Error(HttpStatusCode statusCode, PlaidError error, [CallerMemberName] string callerName = "")
+    {
+        var result = new PlaidServiceException((int)statusCode, error);
+        _logger.LogError(result, "{caller}: FAILED {status}", callerName, statusCode);
 
         return result;
     }

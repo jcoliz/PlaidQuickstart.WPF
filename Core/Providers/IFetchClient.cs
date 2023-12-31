@@ -9,4 +9,5 @@ public interface IFetchClient
 {
     Task<WireDataTable> Balance();
     Task<WireDataTable> Transactions();
+    Task<WireDataTable> Institutions();
 }
