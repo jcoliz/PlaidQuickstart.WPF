@@ -22,13 +22,6 @@ namespace PlaidProviders;
 /// <param name="client">Client to use for connection</param>
 public class LinkProvider(ILogger<LinkProvider> logger, IOptions<AppSettings> appSettings, IOptions<PlaidCredentials> credentials, PlaidClient client) : ILinkClient
 {
-    public Task<bool> IsLoggedIn()
-    {
-        CheckCredentials();
-
-        return Task.FromResult(credentials.Value.AccessToken is not null);
-    }
-
     public async Task<string> CreateLinkToken()
     {
         CheckCredentials();
@@ -84,6 +77,28 @@ public class LinkProvider(ILogger<LinkProvider> logger, IOptions<AppSettings> ap
         logger.LogInformation("Info: OK item:{item}", credentials.Value!.ItemId ?? "null");
 
         return Task.FromResult(credentials.Value!);
+    }
+
+    public Task<bool> IsLoggedIn()
+    {
+        CheckCredentials();
+
+        var result = credentials.Value.AccessToken is not null;
+
+        logger.LogInformation("IsLoggedIn: OK {result}", result);
+
+        return Task.FromResult(result);
+    }
+
+    public Task LogOut()
+    {
+        CheckCredentials();
+
+        credentials.Value.AccessToken = null;
+
+        logger.LogInformation("LogOut: OK");
+
+        return Task.CompletedTask;
     }
 
     private void CheckCredentials()

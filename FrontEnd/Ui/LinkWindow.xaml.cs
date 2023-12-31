@@ -23,12 +23,10 @@ namespace FrontEnd.Ui;
 public partial class LinkWindow : Window
 {
     private readonly MainViewModel _viewModel;
-    private readonly ILinkClient _linkClient;
     private readonly ILogger<LinkWindow> _logger;
 
     public LinkWindow(MainViewModel viewModel, ILinkClient linkClient, ILogger<LinkWindow> logger)
     {
-        _linkClient = linkClient;
         _viewModel = viewModel;
         _logger = logger;
 

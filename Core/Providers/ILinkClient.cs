@@ -14,4 +14,6 @@ public interface ILinkClient
     Task<PlaidCredentials> Info();
 
     Task<bool> IsLoggedIn();
+
+    Task LogOut();
 }
