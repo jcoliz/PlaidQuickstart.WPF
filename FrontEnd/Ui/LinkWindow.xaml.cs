@@ -29,9 +29,6 @@ public partial class LinkWindow : Window
         // e.g. any `console.log()` calls will send output here
         Browser.ConsoleMessage += (_,e) => _viewModel.LogBrowserConsoleMessage(e);
 
-        // Attach to posted messages
-        Browser.JavascriptMessageReceived += (_,e) => _viewModel.ReceiveJavascriptMessage(e);
-
         // Close when link flow complete
         _viewModel.LinkFlowFinished += viewModel_LinkFlowFinished;
 
@@ -40,6 +37,14 @@ public partial class LinkWindow : Window
         Browser.JavascriptObjectRepository.Register(
             "linkClient",
             linkClient,       
+            options: BindingOptions.DefaultBinder
+        );
+
+        // Register page status reporting for JS
+        IPageStatus pageStatus = _viewModel;
+        Browser.JavascriptObjectRepository.Register(
+            "pageStatus",
+            pageStatus,
             options: BindingOptions.DefaultBinder
         );
     }

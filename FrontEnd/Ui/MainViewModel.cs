@@ -21,7 +21,7 @@ public class MainViewModel(
     IFetchClient fetchClient,
     ILinkClient linkClient
 )
-    : INotifyPropertyChanged
+    : INotifyPropertyChanged, IPageStatus
 {
     /// <summary>
     /// Web location of the home page
@@ -82,13 +82,13 @@ public class MainViewModel(
     /// <summary>
     /// Initiate logging out
     /// </summary>
-    public ICommand LogOutCommand => _LogOutCommand ??= new CommandHandler(_ => DoLogOut(), () => true);
+    public ICommand LogOutCommand => _LogOutCommand ??= new CommandHandler(_ => DoLogOut(), () => IsLoggedIn);
     private ICommand? _LogOutCommand;
 
     /// <summary>
     /// Initiate logging out
     /// </summary>
-    public ICommand StartLinkCommand => _StartLinkCommand ??= new CommandHandler(_ => LinkFlowStarting?.Invoke(this, new EventArgs()), () => true);
+    public ICommand StartLinkCommand => _StartLinkCommand ??= new CommandHandler(_ => LaunchLink(), () => true);
     private ICommand? _StartLinkCommand;
 
     /// <summary>
@@ -277,6 +277,15 @@ public class MainViewModel(
     }
 
     /// <summary>
+    /// Begin the Link flow
+    /// </summary>
+    protected void LaunchLink()
+    {
+        LinkLoading();
+        LinkFlowStarting?.Invoke(this, new EventArgs());
+    }
+
+    /// <summary>
     /// Process browser console messages
     /// </summary>
     /// <remarks>
@@ -307,23 +316,46 @@ public class MainViewModel(
         }
     }
 
-    /// <summary>
-    /// Receive message from browser
-    /// </summary>
-    /// <remarks>
-    /// All messages mean we should close the window
-    /// </remarks>
-    /// <param name="e">Event details</param>
-    public void ReceiveJavascriptMessage( JavascriptMessageReceivedEventArgs e)
-    {
-        var success = (bool)e.Message;
-     
-        logger.LogInformation("Browser: Received message {message}", success);
 
-        if (success)
-        {
-            LastErrorMessage = null;
-        }
+    /// <summary>
+    /// Report that Link is loading now
+    /// </summary>
+    public void LinkLoading()
+    {
+        logger.LogInformation("Page Status: Loading");
+
+        // Here we could display an indication to the user
+    }
+    /// <summary>
+    /// Report that Link is running now
+    /// </summary>
+    public void LinkRunning()
+    {
+        logger.LogInformation("Page Status: Running");
+
+        // Here we could display an indication to the user
+    }
+    /// <summary>
+    /// Report that Link has completed successfully now
+    /// </summary>
+    public void LinkSuccess()
+    {
+        logger.LogInformation("Page Status: Success");
+
+        LastErrorMessage = null;
+
+        _ = UpdateLoggedInState();
+
+        LinkFlowFinished?.Invoke(this, new EventArgs());
+    }
+    /// <summary>
+    /// Report that Link has failed now
+    /// </summary>
+    public void LinkFailed(string reason)
+    {
+        logger.LogError("Page Status: Failed {reason}", reason);
+
+        LastErrorMessage = reason;
 
         _ = UpdateLoggedInState();
 
