@@ -58,6 +58,8 @@ public partial class LinkWindow : Window
     /// </remarks>
     private void Browser_ConsoleMessage(object? _, ConsoleMessageEventArgs e)
     {
+        // TODO: Consider whether it would be better to push this into the view model
+
         _logger.Log(
             e.Level switch
             {
@@ -72,6 +74,11 @@ public partial class LinkWindow : Window
             e.Source,
             e.Line
         );
+
+        if (e.Level == LogSeverity.Error)
+        {
+            _viewModel.LastErrorMessage = e.Message;        
+        }
     }
 
     /// <summary>
@@ -82,14 +89,23 @@ public partial class LinkWindow : Window
     /// </remarks>
     /// <param name="sender">Browser which sent it</param>
     /// <param name="e">Event details</param>
-    private void Browser_JavascriptMessageReceived(object? sender, JavascriptMessageReceivedEventArgs e)
+    private void Browser_JavascriptMessageReceived(object? _, JavascriptMessageReceivedEventArgs e)
     {
-        _logger.LogInformation("Browser: Received message {message}", (bool)e.Message);
+        // TODO: Consider whether it would be better to push this into the view model
+
+        var success = (bool)e.Message;
+        _logger.LogInformation("Browser: Received message {message}", success);
 
         // This event is called on a CEF Thread.
         // We have some UI work now, will send through dispatcher
         Dispatcher.BeginInvoke(() =>
         {
+            // Clear the error, if successful
+            if (success)
+            {
+                _viewModel.LastErrorMessage = null;            
+            }
+
             // Update the logged in state
             _ = _viewModel.UpdateLoggedInState();
 

@@ -108,6 +108,23 @@ public class MainViewModel(
     private bool _IsLoggedIn = false;
 
     /// <summary>
+    /// Most recently reported error
+    /// </summary>
+    public string? LastErrorMessage
+    {
+        get => _LastErrorMessage;
+        set
+        {
+            if (_LastErrorMessage != value)
+            {
+                _LastErrorMessage = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LastErrorMessage)));
+            }
+        }
+    }
+    private string? _LastErrorMessage;
+
+    /// <summary>
     /// Latest balances data from server
     /// </summary>
     public DataView? BalancesData

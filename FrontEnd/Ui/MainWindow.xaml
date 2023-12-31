@@ -14,6 +14,7 @@
                     <TextBlock Margin="10,10,10,0">Plaid Link Connection</TextBlock>
                     <TextBlock Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource VisibleIfTrue}}">Status: Connected</TextBlock>
                     <TextBlock Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource CollapsedIfTrue}}">Status: Disconnected</TextBlock>
+                    <TextBlock Margin="10,10,10,0" TextWrapping="Wrap" Text="{Binding LastErrorMessage}"></TextBlock>
                     <Button Click="LinkButton_Click" Padding="5" Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource CollapsedIfTrue}}">Connect</Button>
                     <Button Click="LinkButton_Click" Padding="5" Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource VisibleIfTrue}}">Update</Button>
                     <Button  Command="{Binding LogOutCommand}" Padding="5" Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource VisibleIfTrue}}">Log Out</Button>
