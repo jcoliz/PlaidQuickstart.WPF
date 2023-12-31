@@ -26,9 +26,15 @@ public class BooleanConverter<T> : IValueConverter
         get; set;
     }
 
-    public virtual object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public virtual object Convert(object? value, Type targetType, object parameter, CultureInfo culture)
     {
-        return value is bool && ((bool)value) ? True : False;
+        return value switch
+        {
+            true => True!,
+            false => False!,
+            null => False!,
+            _ => True!
+        };
     }
 
     public virtual object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
