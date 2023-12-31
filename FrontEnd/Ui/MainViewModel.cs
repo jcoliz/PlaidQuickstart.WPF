@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Data;
 using System.Windows.Input;
+using System.Windows.Threading;
 using CefSharp;
 using Core.Models;
 using Core.Providers;
@@ -49,6 +50,11 @@ public class MainViewModel(
     /// Fires when something has changed
     /// </summary>
     public event PropertyChangedEventHandler? PropertyChanged;
+
+    /// <summary>
+    /// Fires when Link is complete
+    /// </summary>
+    public event EventHandler? LinkFlowFinished;
 
     /// <summary>
     /// Initiate fetching of balances
@@ -278,6 +284,29 @@ public class MainViewModel(
         {
             LastErrorMessage = e.Message;
         }
+    }
+
+    /// <summary>
+    /// Receive message from browser
+    /// </summary>
+    /// <remarks>
+    /// All messages mean we should close the window
+    /// </remarks>
+    /// <param name="e">Event details</param>
+    public void ReceiveJavascriptMessage( JavascriptMessageReceivedEventArgs e)
+    {
+        var success = (bool)e.Message;
+     
+        logger.LogInformation("Browser: Received message {message}", success);
+
+        if (success)
+        {
+            LastErrorMessage = null;
+        }
+
+        _ = UpdateLoggedInState();
+
+        LinkFlowFinished?.Invoke(this, new EventArgs());
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,7 +39,10 @@ public partial class LinkWindow : Window
         Browser.ConsoleMessage += (_,e) => _viewModel.LogBrowserConsoleMessage(e);
 
         // Attach to posted messages
-        Browser.JavascriptMessageReceived += Browser_JavascriptMessageReceived;
+        Browser.JavascriptMessageReceived += (_,e) => _viewModel.ReceiveJavascriptMessage(e);
+
+        // Close when link flow complete
+        _viewModel.LinkFlowFinished += viewModel_LinkFlowFinished;
 
         // Register link client for JS
         Browser.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
@@ -49,36 +53,20 @@ public partial class LinkWindow : Window
         );
     }
 
-    /// <summary>
-    /// Receive message from browser
-    /// </summary>
-    /// <remarks>
-    /// All messages mean we should close the window
-    /// </remarks>
-    /// <param name="sender">Browser which sent it</param>
-    /// <param name="e">Event details</param>
-    private void Browser_JavascriptMessageReceived(object? _, JavascriptMessageReceivedEventArgs e)
+    private void viewModel_LinkFlowFinished(object? sender, EventArgs e)
     {
-        // TODO: Consider whether it would be better to push this into the view model
-
-        var success = (bool)e.Message;
-        _logger.LogInformation("Browser: Received message {message}", success);
-
         // This event is called on a CEF Thread.
         // We have some UI work now, will send through dispatcher
         Dispatcher.BeginInvoke(() =>
         {
-            // Clear the error, if successful
-            if (success)
-            {
-                _viewModel.LastErrorMessage = null;            
-            }
-
-            // Update the logged in state
-            _ = _viewModel.UpdateLoggedInState();
-
             // Close this window
             Close();
         });
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+        _viewModel.LinkFlowFinished -= viewModel_LinkFlowFinished;
+        base.OnClosing(e);
     }
 }
