@@ -52,6 +52,11 @@ public class MainViewModel(
     public event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
+    /// Fires when Link is starting
+    /// </summary>
+    public event EventHandler? LinkFlowStarting;
+
+    /// <summary>
     /// Fires when Link is complete
     /// </summary>
     public event EventHandler? LinkFlowFinished;
@@ -80,7 +85,11 @@ public class MainViewModel(
     public ICommand LogOutCommand => _LogOutCommand ??= new CommandHandler(_ => DoLogOut(), () => true);
     private ICommand? _LogOutCommand;
 
-
+    /// <summary>
+    /// Initiate logging out
+    /// </summary>
+    public ICommand StartLinkCommand => _StartLinkCommand ??= new CommandHandler(_ => LinkFlowStarting?.Invoke(this, new EventArgs()), () => true);
+    private ICommand? _StartLinkCommand;
 
     /// <summary>
     /// Whether we currently KNOW if we're logged in or not
