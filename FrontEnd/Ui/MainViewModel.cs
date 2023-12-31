@@ -64,19 +64,19 @@ public class MainViewModel(
     /// <summary>
     /// Initiate fetching of balances
     /// </summary>
-    public ICommand FetchBalancesCommand => _FetchBalancesCommand ??= new CommandHandler(_ => FetchBalances(), () => IsLoggedIn);
+    public ICommand FetchBalancesCommand => _FetchBalancesCommand ??= new CommandHandler(_ => FetchBalances(), () => IsLoggedIn && !IsFetchingBalances);
     private ICommand? _FetchBalancesCommand;
 
     /// <summary>
     /// Initiate fetching of transactions
     /// </summary>
-    public ICommand FetchTransactionsCommand => _FetchTransactionsCommand ??= new CommandHandler(_ => FetchTransactions(), () => IsLoggedIn);
+    public ICommand FetchTransactionsCommand => _FetchTransactionsCommand ??= new CommandHandler(_ => FetchTransactions(), () => IsLoggedIn && !IsFetchingTransactions);
     private ICommand? _FetchTransactionsCommand;
 
     /// <summary>
     /// Initiate fetching of transactions
     /// </summary>
-    public ICommand FetchInstitutionsCommand => _FetchInstitutionsCommand ??= new CommandHandler(_ => FetchInstitutions(), () => true);
+    public ICommand FetchInstitutionsCommand => _FetchInstitutionsCommand ??= new CommandHandler(_ => FetchInstitutions(), () => !IsFetchingInstitutions);
     private ICommand? _FetchInstitutionsCommand;
 
     /// <summary>
@@ -199,6 +199,8 @@ public class MainViewModel(
     {
         try
         {
+            IsFetchingBalances = true;
+            BalancesData?.Table?.Clear();
             var data = await fetchClient!.Balance();
             var table = data.ToClientDataTable();
             BalancesData = table.AsDataView();
@@ -210,9 +212,14 @@ public class MainViewModel(
         }
         finally
         {
+            IsFetchingBalances = false;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BalancesData)));
         }
     }
+
+    private bool IsFetchingBalances = false;
+    private bool IsFetchingTransactions = false;
+    private bool IsFetchingInstitutions = false;
 
     /// <summary>
     /// Do the work of fetching transactions
@@ -221,6 +228,8 @@ public class MainViewModel(
     {
         try
         {
+            IsFetchingTransactions = true;
+            TransactionsData?.Table?.Clear();
             var data = await fetchClient!.Transactions();
             var table = data.ToClientDataTable();
             TransactionsData = table.AsDataView();
@@ -232,6 +241,7 @@ public class MainViewModel(
         }
         finally
         {
+            IsFetchingTransactions = false;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TransactionsData)));
         }
     }
@@ -243,7 +253,8 @@ public class MainViewModel(
     {
         try
         {
-            InstitutionsResult = $"Fetching...";
+            IsFetchingInstitutions = true;
+            InstitutionsResult = "Fetching...";
             var data = await fetchClient!.Institutions();
             var num_rows = data.Rows.Length;
             InstitutionsResult = $"Fetch OK. {num_rows} rows fetched.";
@@ -253,6 +264,7 @@ public class MainViewModel(
             logger.LogError(ex, "FetchInstitutions: FAILED");
             InstitutionsResult = ex.ToString();
         }
+        IsFetchingInstitutions = false;
     }
 
     /// <summary>
