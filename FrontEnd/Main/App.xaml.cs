@@ -57,12 +57,12 @@ public partial class App : Application
             {                
                 services.AddSingleton<MainWindow>();
                 services.AddSingleton<MainViewModel>();
-                services.AddScoped<LinkWindow>();
+                services.AddTransient<LinkWindow>();
                 services.Configure<UiSettings>(context.Configuration.GetSection(UiSettings.Section));
 
                 // Only used for Standalone client
                 services.AddSingleton<LinkSchemeHandlerFactory>();
-                services.AddScoped<LinkResourceHandler>();
+                services.AddTransient<LinkResourceHandler>();
                 services.Configure<PlaidCredentials>(context.Configuration.GetSection(PlaidCredentials.SectionKey));
                 services.Configure<PlaidOptions>(context.Configuration.GetSection(PlaidOptions.SectionKey));
                 services.AddSingleton<PlaidClient>();
