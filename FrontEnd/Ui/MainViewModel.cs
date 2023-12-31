@@ -64,13 +64,13 @@ public class MainViewModel(
     /// <summary>
     /// Initiate fetching of balances
     /// </summary>
-    public ICommand FetchBalancesCommand => _FetchBalancesCommand ??= new CommandHandler(_ => FetchBalances(), () => true);
+    public ICommand FetchBalancesCommand => _FetchBalancesCommand ??= new CommandHandler(_ => FetchBalances(), () => IsLoggedIn);
     private ICommand? _FetchBalancesCommand;
 
     /// <summary>
     /// Initiate fetching of transactions
     /// </summary>
-    public ICommand FetchTransactionsCommand => _FetchTransactionsCommand ??= new CommandHandler(_ => FetchTransactions(), () => true);
+    public ICommand FetchTransactionsCommand => _FetchTransactionsCommand ??= new CommandHandler(_ => FetchTransactions(), () => IsLoggedIn);
     private ICommand? _FetchTransactionsCommand;
 
     /// <summary>
