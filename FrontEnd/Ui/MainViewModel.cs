@@ -62,6 +62,12 @@ public class MainViewModel(
     private ICommand? _FetchTransactionsCommand;
 
     /// <summary>
+    /// Initiate logging out
+    /// </summary>
+    public ICommand LogOutCommand => _LogOutCommand ??= new CommandHandler(() => DoLogOut(), () => true);
+    private ICommand? _LogOutCommand;
+
+    /// <summary>
     /// Whether we currently KNOW if we're logged in or not
     /// </summary>
     /// <remarks>
@@ -170,6 +176,15 @@ public class MainViewModel(
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TransactionsData)));
         }
+    }
+
+    /// <summary>
+    /// Do the work of logging out
+    /// </summary>
+    protected async void DoLogOut()
+    {
+        await linkClient.LogOut();
+        await UpdateLoggedInState();    
     }
 }
 
