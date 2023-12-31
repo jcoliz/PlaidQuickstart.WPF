@@ -14,8 +14,8 @@
                     <TextBlock Margin="10,10,10,0">Plaid Link Connection</TextBlock>
                     <TextBlock Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource VisibleIfTrue}}">Status: Connected</TextBlock>
                     <TextBlock Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource CollapsedIfTrue}}">Status: Disconnected</TextBlock>
-                    <Button Click="LinkButton_Click" Padding="5" Margin="10,10,10,0">Connect</Button>
-                    <Button Click="LinkButton_Click" Padding="5" Margin="10">Update</Button>
+                    <Button Click="LinkButton_Click" Padding="5" Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource CollapsedIfTrue}}">Connect</Button>
+                    <Button Click="LinkButton_Click" Padding="5" Margin="10" Visibility="{Binding IsLoggedIn, Converter={StaticResource VisibleIfTrue}}">Update</Button>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Accounts">
