@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Data;
 using System.Windows.Input;
+using CefSharp;
 using Core.Models;
 using Core.Providers;
 using Microsoft.Extensions.Logging;
@@ -52,26 +53,28 @@ public class MainViewModel(
     /// <summary>
     /// Initiate fetching of balances
     /// </summary>
-    public ICommand FetchBalancesCommand => _FetchBalancesCommand ??= new CommandHandler(() => FetchBalances(), () => true);
+    public ICommand FetchBalancesCommand => _FetchBalancesCommand ??= new CommandHandler(_ => FetchBalances(), () => true);
     private ICommand? _FetchBalancesCommand;
 
     /// <summary>
     /// Initiate fetching of transactions
     /// </summary>
-    public ICommand FetchTransactionsCommand => _FetchTransactionsCommand ??= new CommandHandler(() => FetchTransactions(), () => true);
+    public ICommand FetchTransactionsCommand => _FetchTransactionsCommand ??= new CommandHandler(_ => FetchTransactions(), () => true);
     private ICommand? _FetchTransactionsCommand;
 
     /// <summary>
     /// Initiate fetching of transactions
     /// </summary>
-    public ICommand FetchInstitutionsCommand => _FetchInstitutionsCommand ??= new CommandHandler(() => FetchInstitutions(), () => true);
+    public ICommand FetchInstitutionsCommand => _FetchInstitutionsCommand ??= new CommandHandler(_ => FetchInstitutions(), () => true);
     private ICommand? _FetchInstitutionsCommand;
 
     /// <summary>
     /// Initiate logging out
     /// </summary>
-    public ICommand LogOutCommand => _LogOutCommand ??= new CommandHandler(() => DoLogOut(), () => true);
+    public ICommand LogOutCommand => _LogOutCommand ??= new CommandHandler(_ => DoLogOut(), () => true);
     private ICommand? _LogOutCommand;
+
+
 
     /// <summary>
     /// Whether we currently KNOW if we're logged in or not
@@ -244,6 +247,37 @@ public class MainViewModel(
     {
         await linkClient.LogOut();
         await UpdateLoggedInState();    
+    }
+
+    /// <summary>
+    /// Process browser console messages
+    /// </summary>
+    /// <remarks>
+    /// Simply redirects them to the system logger.
+    /// May be worth considering sending them to the server for logging
+    /// TODO: Make into an ICommand
+    /// </remarks>
+    public void LogBrowserConsoleMessage(ConsoleMessageEventArgs e)
+    {
+        logger.Log(
+            e.Level switch
+            {
+                CefSharp.LogSeverity.Error => LogLevel.Error,
+                CefSharp.LogSeverity.Warning => LogLevel.Warning,
+                CefSharp.LogSeverity.Verbose => LogLevel.Debug,
+                CefSharp.LogSeverity.Fatal => LogLevel.Critical,
+                _ => LogLevel.Information
+            },
+            "Browser: {message}, source:{source} ({line})",
+            e.Message,
+            e.Source,
+            e.Line
+        );
+
+        if (e.Level == LogSeverity.Error)
+        {
+            LastErrorMessage = e.Message;
+        }
     }
 }
 

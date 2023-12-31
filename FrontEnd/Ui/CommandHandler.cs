@@ -7,7 +7,7 @@ namespace FrontEnd.Ui;
 /// </summary>
 /// <param name="action">Action to be executed by the command</param>
 /// <param name="canExecute">A bolean property to containing current permissions to execute the command</param>
-public class CommandHandler(Action action, Func<bool> canExecute) : ICommand
+public class CommandHandler(Action<object?> action, Func<bool> canExecute) : ICommand
 {
     /// <summary>
     /// Wires CanExecuteChanged event 
@@ -30,6 +30,6 @@ public class CommandHandler(Action action, Func<bool> canExecute) : ICommand
 
     public void Execute(object? parameter)
     {
-        action();
+        action(parameter);
     }
 }

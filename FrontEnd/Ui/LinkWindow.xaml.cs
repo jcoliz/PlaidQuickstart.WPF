@@ -35,7 +35,7 @@ public partial class LinkWindow : Window
 
         // Attach to browser console messages
         // e.g. any `console.log()` calls will send output here
-        Browser.ConsoleMessage += Browser_ConsoleMessage;
+        Browser.ConsoleMessage += (_,e) => _viewModel.LogBrowserConsoleMessage(e);
 
         // Attach to posted messages
         Browser.JavascriptMessageReceived += Browser_JavascriptMessageReceived;
@@ -47,38 +47,6 @@ public partial class LinkWindow : Window
             linkClient,       
             options: BindingOptions.DefaultBinder
         );
-    }
-
-    /// <summary>
-    /// Proecess browser console messages
-    /// </summary>
-    /// <remarks>
-    /// Simply redirects them to the system logger.
-    /// May be worth considering sending them to the server for logging
-    /// </remarks>
-    private void Browser_ConsoleMessage(object? _, ConsoleMessageEventArgs e)
-    {
-        // TODO: Consider whether it would be better to push this into the view model
-
-        _logger.Log(
-            e.Level switch
-            {
-                CefSharp.LogSeverity.Error => LogLevel.Error,
-                CefSharp.LogSeverity.Warning => LogLevel.Warning,
-                CefSharp.LogSeverity.Verbose => LogLevel.Debug,
-                CefSharp.LogSeverity.Fatal => LogLevel.Critical,
-                _ => LogLevel.Information
-            },
-            "Browser: {message}, source:{source} ({line})",
-            e.Message,
-            e.Source,
-            e.Line
-        );
-
-        if (e.Level == LogSeverity.Error)
-        {
-            _viewModel.LastErrorMessage = e.Message;        
-        }
     }
 
     /// <summary>
