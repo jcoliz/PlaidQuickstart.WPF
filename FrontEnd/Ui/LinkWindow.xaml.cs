@@ -1,19 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using CefSharp;
-using CefSharp.Wpf;
 using Core.Providers;
 using Microsoft.Extensions.Logging;
 
@@ -33,6 +20,10 @@ public partial class LinkWindow : Window
 
         InitializeComponent();
         DataContext = _viewModel;
+
+        // Note that we cannot use XAML EventTriggers for these events, because they are triggered
+        // on CEF threads
+        // See https://stackoverflow.com/questions/76414363/cefsharp-with-wpf-mvvm
 
         // Attach to browser console messages
         // e.g. any `console.log()` calls will send output here
