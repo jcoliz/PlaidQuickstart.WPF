@@ -22,14 +22,18 @@ namespace FrontEnd.Ui;
 /// </summary>
 public partial class LinkWindow : Window
 {
+    private readonly MainViewModel _viewModel;
+    private readonly ILinkClient _linkClient;
     private readonly ILogger<LinkWindow> _logger;
 
     public LinkWindow(MainViewModel viewModel, ILinkClient linkClient, ILogger<LinkWindow> logger)
     {
+        _linkClient = linkClient;
+        _viewModel = viewModel;
         _logger = logger;
 
         InitializeComponent();
-        DataContext = viewModel;
+        DataContext = _viewModel;
 
         // Attach to browser console messages
         // e.g. any `console.log()` calls will send output here
@@ -42,7 +46,7 @@ public partial class LinkWindow : Window
         Browser.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
         Browser.JavascriptObjectRepository.Register(
             "linkClient",
-            linkClient,             
+            linkClient,       
             options: BindingOptions.DefaultBinder
         );
     }
@@ -84,9 +88,15 @@ public partial class LinkWindow : Window
     {
         _logger.LogInformation("Browser: Received message {message}", (bool)e.Message);
 
-        //This event is called on a CEF Thread, to access your UI thread
-        //use Control.BeginInvoke/Dispatcher.BeginInvoke
+        // This event is called on a CEF Thread.
+        // We have some UI work now, will send through dispatcher
+        Dispatcher.BeginInvoke(() =>
+        {
+            // Update the logged in state
+            _ = _viewModel.UpdateLoggedInState();
 
-        Dispatcher.BeginInvoke(() => Close());
+            // Close this window
+            Close();
+        });
     }
 }

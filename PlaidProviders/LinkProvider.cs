@@ -22,6 +22,13 @@ namespace PlaidProviders;
 /// <param name="client">Client to use for connection</param>
 public class LinkProvider(ILogger<LinkProvider> logger, IOptions<AppSettings> appSettings, IOptions<PlaidCredentials> credentials, PlaidClient client) : ILinkClient
 {
+    public Task<bool> IsLoggedIn()
+    {
+        CheckCredentials();
+
+        return Task.FromResult(credentials.Value.AccessToken is not null);
+    }
+
     public async Task<string> CreateLinkToken()
     {
         CheckCredentials();

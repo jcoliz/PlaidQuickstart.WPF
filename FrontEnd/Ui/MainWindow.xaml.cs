@@ -11,7 +11,6 @@ namespace FrontEnd.Ui;
 /// </summary>
 public partial class MainWindow : Window
 {
-    private readonly ILogger<MainWindow> _logger;
     private readonly IServiceProvider _serviceProvider;
 
     /// <summary>
@@ -19,14 +18,15 @@ public partial class MainWindow : Window
     /// </summary>
     /// <param name="viewModel">ViewModel to define our behavior</param>
     /// <param name="logger">Where to send logs</param>
-    public MainWindow(MainViewModel viewModel, ILogger<MainWindow> logger, IServiceProvider serviceProvider)
+    public MainWindow(MainViewModel viewModel, IServiceProvider serviceProvider)
     {
-        _logger = logger;
         _serviceProvider = serviceProvider;
 
         InitializeComponent();
         DataContext = viewModel;
 
+        // Maybe should do this in viewmodel constructor?
+        _ = viewModel.UpdateLoggedInState();
     }
 
     private void LinkButton_Click(object sender, RoutedEventArgs e)

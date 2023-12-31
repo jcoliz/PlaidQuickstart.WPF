@@ -16,8 +16,9 @@ public class MainViewModel(
     ILogger<MainViewModel> logger, 
     IOptions<UiSettings> settings, 
     IOptions<AppSettings> appSettings, 
-    IFetchClient fetchClient
-) 
+    IFetchClient fetchClient,
+    ILinkClient linkClient
+)
     : INotifyPropertyChanged
 {
     /// <summary>
@@ -41,7 +42,6 @@ public class MainViewModel(
                 return result;
             }
         }
-
     }
 
     /// <summary>
@@ -60,6 +60,46 @@ public class MainViewModel(
     /// </summary>
     public ICommand FetchTransactionsCommand => _FetchTransactionsCommand ??= new CommandHandler(() => FetchTransactions(), () => true);
     private ICommand? _FetchTransactionsCommand;
+
+    /// <summary>
+    /// Whether we currently KNOW if we're logged in or not
+    /// </summary>
+    /// <remarks>
+    /// The knowledge of whether we're logged in or not may live remotely.
+    /// It would be a network-bound call to find out. This property will hold
+    /// 'true' if we have received a definitiive result from the Link Provider  
+    /// that we are or are not logged in.
+    /// </remarks>
+    public bool IsLoggedInStatusKnown
+    {
+        get => _IsLoggedInStatusKnown;
+        private set
+        {
+            if (_IsLoggedInStatusKnown != value)
+            {
+                _IsLoggedInStatusKnown = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsLoggedIn)));
+            }
+        }
+    }
+    private bool _IsLoggedInStatusKnown = false;
+
+    /// <summary>
+    /// Whether user is currently logged in
+    /// </summary>
+    public bool IsLoggedIn
+    {
+        get => _IsLoggedIn;
+        private set
+        {
+            if (_IsLoggedIn != value)
+            {
+                _IsLoggedIn = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsLoggedIn)));
+            }
+        }
+    }
+    private bool _IsLoggedIn = false;
 
     /// <summary>
     /// Latest balances data from server
@@ -81,6 +121,12 @@ public class MainViewModel(
     /// Display name of application
     /// </summary>
     public string AppName => appSettings.Value?.Name ?? nameof(MainViewModel);
+
+    public async Task UpdateLoggedInState()
+    {
+        IsLoggedIn = await linkClient.IsLoggedIn();
+        IsLoggedInStatusKnown = true;
+    }
 
     /// <summary>
     /// Do the work of feteching balances

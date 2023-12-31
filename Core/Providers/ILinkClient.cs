@@ -12,4 +12,6 @@ public interface ILinkClient
     Task<PlaidCredentials> ExchangePublicToken(LinkResult link);
 
     Task<PlaidCredentials> Info();
+
+    Task<bool> IsLoggedIn();
 }
