@@ -1,7 +1,4 @@
-﻿using System.Data;
-using System.Net;
-using System.Runtime.CompilerServices;
-using Core.Models;
+﻿using Core.Models;
 using Core.Providers;
 using Going.Plaid;
 using Going.Plaid.Accounts;
@@ -10,6 +7,9 @@ using Going.Plaid.Institutions;
 using Going.Plaid.Transactions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Data;
+using System.Net;
+using System.Runtime.CompilerServices;
 
 namespace PlaidProviders;
 
@@ -113,10 +113,7 @@ public class FetchProvider(ILogger<FetchProvider> _logger, IOptions<PlaidCredent
 
     public async Task<WireDataTable> Institutions()
     {
-        if (_credentials == null)
-        {
-            throw new ArgumentNullException(nameof(_credentials), "Please supply Plaid credentials in .NET configuration");
-        }
+        CheckCredentials();
 
         // Note that this endpoint does NOT want an access token set on the client
         _client.AccessToken = null;
@@ -198,12 +195,18 @@ public class FetchProvider(ILogger<FetchProvider> _logger, IOptions<PlaidCredent
         return result;
     }
 
-    private void CheckCredentialsLoggedIn()
+    private void CheckCredentials()
     {
-        if (_credentials == null)
+        if (_credentials == null || _credentials.Value == null)
         {
             throw new ArgumentNullException(nameof(_credentials), "Please supply Plaid credentials in .NET configuration");
         }
+    }
+
+    private void CheckCredentialsLoggedIn()
+    {
+        CheckCredentials();
+
         if (_credentials.Value!.AccessToken == null)
         {
             throw new ArgumentNullException(nameof(_credentials.Value.AccessToken), "Must be logged in to complete this operation");
