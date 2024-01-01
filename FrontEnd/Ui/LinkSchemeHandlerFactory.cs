@@ -1,12 +1,6 @@
-﻿using CefSharp;
-using Core.Models;
-using Core.Providers;
+﻿using System.Net;
+using CefSharp;
 using Microsoft.Extensions.Logging;
-using System.Net;
-using System.Text;
-using System.Text.Json;
-using System.Web;
-
 using Application = System.Windows.Application;
 
 namespace FrontEnd.Ui;
