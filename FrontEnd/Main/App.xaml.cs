@@ -65,7 +65,6 @@ public partial class App : Application
 
                 // Only used for Standalone client
                 services.AddSingleton<LinkSchemeHandlerFactory>();
-                services.AddTransient<LinkResourceHandler>();
                 services.Configure<PlaidCredentials>(context.Configuration.GetSection(PlaidCredentials.SectionKey));
                 services.Configure<PlaidOptions>(context.Configuration.GetSection(PlaidOptions.SectionKey));
                 services.AddSingleton<PlaidClient>();
