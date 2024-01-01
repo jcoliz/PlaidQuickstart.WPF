@@ -9,19 +9,21 @@ namespace FrontEnd.Main;
 /// Manages Win32 DLL's.
 /// From https://stackoverflow.com/questions/31978826/is-it-possible-to-have-a-wpf-application-print-console-output
 /// </remarks>
-internal static class ConsoleAllocator
+internal static partial class ConsoleAllocator
 {
-    [DllImport(@"kernel32.dll", SetLastError = true)]
-    static extern bool AllocConsole();
+    [LibraryImport(@"kernel32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool AllocConsole();
 
-    [DllImport(@"kernel32.dll")]
-    static extern IntPtr GetConsoleWindow();
+    [LibraryImport(@"kernel32.dll")]
+    private static partial IntPtr GetConsoleWindow();
 
-    [DllImport(@"user32.dll")]
-    static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    [LibraryImport(@"user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-    const int SwHide = 0;
-    const int SwShow = 5;
+    private const int SwHide = 0;
+    private const int SwShow = 5;
 
     public static void ShowConsoleWindow()
     {
