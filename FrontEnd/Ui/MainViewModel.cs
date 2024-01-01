@@ -94,6 +94,9 @@ public class MainViewModel(
             {
                 _IsShowingLink = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsShowingLink)));
+
+                // Web address changes are tied to showing link changes
+                WebAddress = _IsShowingLink ? ConfiguredWebAddress : _BlankWebAddress;
             }
         }
     }
@@ -258,7 +261,6 @@ public class MainViewModel(
         logger.LogInformation("Page Status: Loading");
 
         IsShowingLink = true;
-        WebAddress = ConfiguredWebAddress;
 
         // Here we could start displaying an indication to the user that we are now loading
     }
@@ -302,7 +304,6 @@ public class MainViewModel(
     {
         _ = UpdateLoggedInState();
 
-        WebAddress = null;
         IsShowingLink = false;
     }
     #endregion
