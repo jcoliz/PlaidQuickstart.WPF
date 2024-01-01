@@ -7,11 +7,13 @@ using System.Windows;
 namespace FrontEnd.Ui;
 
 /// <summary>
-/// Interaction logic for MainWindow.xaml
+/// As-designed implementation of Main Window
 /// </summary>
+/// <remarks>
+/// In this implementation, Link is displayed within the main window
+/// </remarks>
 public partial class MainWindow : Window
 {
-    private readonly IServiceProvider _serviceProvider;
     private readonly MainViewModel _viewModel;
 
     /// <summary>
@@ -19,9 +21,8 @@ public partial class MainWindow : Window
     /// </summary>
     /// <param name="viewModel">ViewModel to define our behavior</param>
     /// <param name="logger">Where to send logs</param>
-    public MainWindow(MainViewModel viewModel, ILinkClient linkClient, IServiceProvider serviceProvider)
+    public MainWindow(MainViewModel viewModel, ILinkClient linkClient)
     {
-        _serviceProvider = serviceProvider;
         _viewModel = viewModel;
 
         InitializeComponent();
@@ -30,10 +31,6 @@ public partial class MainWindow : Window
         // Maybe should do this in viewmodel constructor?
         _ = viewModel.UpdateLoggedInState();
 
-#if SEPARATE_LINK_WINDOW
-        // Launch link as its own window
-        _viewModel.LinkFlowStarting += LaunchLinkWindow;
-#else
         // Attach to browser console messages
         // e.g. any `console.log()` calls will send output here
         Browser.ConsoleMessage += (_, e) => _viewModel.LogBrowserConsoleMessage(e);
@@ -53,20 +50,5 @@ public partial class MainWindow : Window
             pageStatus,
             options: BindingOptions.DefaultBinder
         );
-#endif
-    }
-
-    /// <summary>
-    /// Launch Link as its own window
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void LaunchLinkWindow(object? sender, EventArgs e)
-    {
-        // Open a separate window to display link flow in
-
-        var linkwindow = _serviceProvider.GetRequiredService<LinkWindow>();
-        linkwindow!.Owner = this;
-        linkwindow.ShowDialog();
     }
 }
