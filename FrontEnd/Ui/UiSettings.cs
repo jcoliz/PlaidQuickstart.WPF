@@ -1,4 +1,7 @@
-﻿namespace FrontEnd.Ui;
+﻿// Copyright (C) 2024 James Coliz, Jr. <jcoliz@outlook.com> All rights reserved
+// Use of this source code is governed by the MIT license (see LICENSE file)
+
+namespace FrontEnd.Ui;
 
 /// <summary>
 /// Settings which affect how the UI is presented

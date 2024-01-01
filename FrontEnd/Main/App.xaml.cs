@@ -1,4 +1,7 @@
-﻿using CefSharp;
+﻿// Copyright (C) 2024 James Coliz, Jr. <jcoliz@outlook.com> All rights reserved
+// Use of this source code is governed by the MIT license (see LICENSE file)
+
+using CefSharp;
 using CefSharp.Wpf;
 using Core.Models;
 using Core.Providers;

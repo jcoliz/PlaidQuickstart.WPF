@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (C) 2024 James Coliz, Jr. <jcoliz@outlook.com> All rights reserved
+// Use of this source code is governed by the MIT license (see LICENSE file)
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -15,7 +18,6 @@ namespace FrontEnd.Ui.ValueConverters;
 /// <typeparam name="T">Which type to convert into</typeparam>
 public class BooleanConverter<T>(T trueValue, T falseValue) : IValueConverter
 {
-
     public T True
     {
         get; set;
