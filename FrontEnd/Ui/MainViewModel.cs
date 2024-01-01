@@ -69,7 +69,7 @@ public class MainViewModel(
     /// <summary>
     /// Initiate logging out
     /// </summary>
-    public ICommand StartLinkCommand => _StartLinkCommand ??= new CommandHandler(_ => LaunchLink(), () => true);
+    public ICommand StartLinkCommand => _StartLinkCommand ??= new CommandHandler(_ => LinkLoading(), () => true);
     private ICommand? _StartLinkCommand;
 
     #endregion
@@ -266,7 +266,11 @@ public class MainViewModel(
     {
         logger.LogInformation("Page Status: Loading");
 
-        // Here we could display an indication to the user
+        LinkFlowStarting?.Invoke(this, new EventArgs());
+        IsShowingLink = true;
+        WebAddress = ConfiguredWebAddress;
+
+        // Here we could start displaying an indication to the user that we are now loading
     }
     /// <summary>
     /// Report that Link is running now
@@ -275,7 +279,7 @@ public class MainViewModel(
     {
         logger.LogInformation("Page Status: Running");
 
-        // Here we could display an indication to the user
+        // Here we could stop displaying an indication to the user that we were loading
     }
     /// <summary>
     /// Report that Link has completed successfully now
@@ -416,17 +420,6 @@ public class MainViewModel(
     {
         await linkClient.LogOut();
         await UpdateLoggedInState();    
-    }
-
-    /// <summary>
-    /// Begin the Link flow
-    /// </summary>
-    protected void LaunchLink()
-    {
-        LinkLoading();
-        LinkFlowStarting?.Invoke(this, new EventArgs());
-        IsShowingLink = true;
-        WebAddress = ConfiguredWebAddress;
     }
 
     #endregion
