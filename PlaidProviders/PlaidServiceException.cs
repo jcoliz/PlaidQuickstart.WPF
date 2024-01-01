@@ -1,5 +1,5 @@
-﻿using Going.Plaid.Entity;
-using Core.Models;
+﻿using Core.Models;
+using Going.Plaid.Entity;
 
 namespace PlaidProviders;
 

@@ -16,17 +16,19 @@ namespace FrontEnd.Ui;
 /// I don't love how complex this is now. Worth considering to split in two,
 /// one to manage link interaction and another to manage fetch interaction
 /// </remarks>
-/// <param name="_fetchClient">Client we will use to fetch bank data</param>
 public class MainViewModel
     : INotifyPropertyChanged, IPageStatus
 {
     #region Fields
-
     private readonly ILogger<MainViewModel> _logger;
     private readonly IOptions<UiSettings> _settings;
     private readonly IOptions<AppSettings> _appSettings;
     private readonly IFetchClient _fetchClient;
     private readonly ILinkClient _linkClient;
+
+    private bool IsFetchingBalances = false;
+    private bool IsFetchingTransactions = false;
+    private bool IsFetchingInstitutions = false;
     #endregion
 
     #region Constructor
@@ -179,7 +181,7 @@ public class MainViewModel
     public string? LastErrorMessage
     {
         get => _LastErrorMessage;
-        set
+        private set
         {
             if (_LastErrorMessage != value)
             {
@@ -235,10 +237,6 @@ public class MainViewModel
     /// <summary>
     /// Process browser console messages
     /// </summary>
-    /// <remarks>
-    /// Simply redirects them to the system logger.
-    /// May be worth considering sending them to the server for logging
-    /// </remarks>
     public void LogBrowserConsoleMessage(ConsoleMessageEventArgs e)
     {
         _logger.Log(
@@ -374,10 +372,6 @@ public class MainViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BalancesData)));
         }
     }
-
-    private bool IsFetchingBalances = false;
-    private bool IsFetchingTransactions = false;
-    private bool IsFetchingInstitutions = false;
 
     /// <summary>
     /// Do the work of fetching transactions

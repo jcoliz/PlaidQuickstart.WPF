@@ -23,5 +23,6 @@ internal interface IPageStatus
     /// <summary>
     /// Report that the operation has failed
     /// </summary>
+    /// <param name="reason">Information about what went wrong</param>
     void LinkFailed(string reason);
 }

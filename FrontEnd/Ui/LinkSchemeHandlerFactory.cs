@@ -31,10 +31,12 @@ public class LinkSchemeHandlerFactory(ILogger<LinkSchemeHandlerFactory> logger) 
         var found = resources.Where(x => x.EndsWith("wwwroot" + uri.AbsolutePath.Replace('/', '.')));
         if (found.Any())
         {
+            logger.LogDebug("Scheme Handler: Supplying static file {uri}", uri);
             return ResourceHandler.FromStream(Application.ResourceAssembly.GetManifestResourceStream(found.First()));
         }
 
-        logger.LogError("URL not found {url}", uri);
+        // If not, we don't know how to serve that
+        logger.LogError("Scheme Handler: URL not found {url}", uri);
         return ResourceHandler.ForErrorMessage("URL Not found", HttpStatusCode.NotFound);
     }
 }

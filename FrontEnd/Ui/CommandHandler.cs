@@ -28,6 +28,10 @@ public class CommandHandler(Action<object?> action, Func<bool> canExecute) : ICo
         return canExecute.Invoke();
     }
 
+    /// <summary>
+    /// Execute the command
+    /// </summary>
+    /// <param name="parameter">Optional parameter for the command</param>
     public void Execute(object? parameter)
     {
         action(parameter);

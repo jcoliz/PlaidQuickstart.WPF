@@ -1,15 +1,15 @@
 ﻿using System.Data;
 using System.Net;
 using System.Runtime.CompilerServices;
+using Core.Models;
+using Core.Providers;
 using Going.Plaid;
 using Going.Plaid.Accounts;
 using Going.Plaid.Entity;
+using Going.Plaid.Institutions;
 using Going.Plaid.Transactions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Core.Models;
-using Core.Providers;
-using Going.Plaid.Institutions;
 
 namespace PlaidProviders;
 

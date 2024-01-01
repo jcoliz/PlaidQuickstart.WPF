@@ -1,12 +1,12 @@
-﻿using System.ComponentModel;
-using System.Windows;
-using CefSharp;
+﻿using CefSharp;
 using Core.Providers;
-using Microsoft.Extensions.Logging;
+using System.ComponentModel;
+using System.Windows;
 
 namespace FrontEnd.Ui;
+
 /// <summary>
-/// Interaction logic for LinkWindow.xaml
+/// Displays Plaid Link flow in a separate window
 /// </summary>
 public partial class LinkWindow : Window
 {
