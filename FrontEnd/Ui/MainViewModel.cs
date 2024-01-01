@@ -280,11 +280,9 @@ public class MainViewModel(
 
         LastErrorMessage = null;
 
-        _ = UpdateLoggedInState();
-
-        WebAddress = null;
-        IsShowingLink = false;
+        LinkDone();
     }
+
     /// <summary>
     /// Report that Link has failed now
     /// </summary>
@@ -294,6 +292,14 @@ public class MainViewModel(
 
         LastErrorMessage = reason;
 
+        LinkDone();
+    }
+
+    /// <summary>
+    /// Common functionality between success/failure
+    /// </summary>
+    protected void LinkDone()
+    {
         _ = UpdateLoggedInState();
 
         WebAddress = null;
