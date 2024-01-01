@@ -94,19 +94,19 @@ public class MainViewModel(
     private Uri? _WebAddress;
     private readonly Uri _BlankWebAddress = new("about:blank");
 
-    public int LinkIndex
+    public bool IsShowingLink
     {
-        get => _LinkIndex;
+        get => _IsShowingLink;
         private set
         {
-            if (_LinkIndex != value)
+            if (_IsShowingLink != value)
             {
-                _LinkIndex = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LinkIndex)));
+                _IsShowingLink = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsShowingLink)));
             }
         }
     }
-    private int _LinkIndex = 0;
+    private bool _IsShowingLink = false;
 
     /// <summary>
     /// Whether we currently KNOW if we're logged in or not
@@ -290,7 +290,7 @@ public class MainViewModel(
 
         WebAddress = null;
         LinkFlowFinished?.Invoke(this, new EventArgs());
-        LinkIndex = 0;
+        IsShowingLink = false;
     }
     /// <summary>
     /// Report that Link has failed now
@@ -305,7 +305,7 @@ public class MainViewModel(
 
         WebAddress = null;
         LinkFlowFinished?.Invoke(this, new EventArgs());
-        LinkIndex = 0;
+        IsShowingLink = false;
     }
     #endregion
 
@@ -425,7 +425,7 @@ public class MainViewModel(
     {
         LinkLoading();
         LinkFlowStarting?.Invoke(this, new EventArgs());
-        LinkIndex = 1;
+        IsShowingLink = true;
         WebAddress = ConfiguredWebAddress;
     }
 

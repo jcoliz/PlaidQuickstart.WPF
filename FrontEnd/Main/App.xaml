@@ -14,5 +14,9 @@
             x:Key="CollapsedIfTrue"
             True="Collapsed" 
             False="Visible" />
+        <vc:BooleanToIntConverter
+            x:Key="TabIndex1IfTrue"
+            True="1"
+            False="0" />
     </Application.Resources>
 </Application>

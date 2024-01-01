@@ -50,3 +50,11 @@ public sealed class BooleanToVisibilityConverter : BooleanConverter<Visibility>
     {
     }
 }
+
+public sealed class BooleanToIntConverter : BooleanConverter<int>
+{
+    public BooleanToIntConverter() :
+        base(1, 0)
+    {
+    }
+}

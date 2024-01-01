@@ -10,7 +10,7 @@
     <Grid>
         <TabControl>
             <TabItem Header="Link">
-                <TabControl SelectedIndex="{Binding LinkIndex, Mode=OneWay}">
+                <TabControl SelectedIndex="{Binding IsShowingLink, Converter={StaticResource TabIndex1IfTrue}, Mode=OneWay}">
                     <TabControl.ItemContainerStyle>
                         <Style TargetType="{x:Type TabItem}">
                             <Setter Property="Visibility" Value="Collapsed"/>
