@@ -19,19 +19,8 @@ namespace PlaidProviders;
 /// <remarks>
 /// Would not be used in production on client
 /// </remarks>
-public class FetchProvider: IFetchClient
+public class FetchProvider(ILogger<FetchProvider> _logger, IOptions<PlaidCredentials> _credentials, PlaidClient _client) : IFetchClient
 {
-    private readonly ILogger<FetchProvider> _logger;
-    private readonly PlaidCredentials _credentials;
-    private readonly PlaidClient _client;
-
-    public FetchProvider(ILogger<FetchProvider> logger, IOptions<PlaidCredentials> credentials, PlaidClient client)
-    {
-        _logger = logger;
-        _credentials = credentials.Value;
-        _client = client;
-    }
-
     public async Task<WireDataTable> Balance()
     {
         CheckCredentialsLoggedIn();
@@ -152,7 +141,7 @@ public class FetchProvider: IFetchClient
             {
                 Count = chunk_size,
                 Offset = fetched_count,
-                CountryCodes = _credentials.CountryCodes!.Split(',').Select(p => Enum.Parse<CountryCode>(p, true)).ToArray(),
+                CountryCodes = _credentials.Value!.CountryCodes!.Split(',').Select(p => Enum.Parse<CountryCode>(p, true)).ToArray(),
             };
 
             var response = await _client.InstitutionsGetAsync(request);
@@ -217,13 +206,13 @@ public class FetchProvider: IFetchClient
         {
             throw new ArgumentNullException(nameof(_credentials), "Please supply Plaid credentials in .NET configuration");
         }
-        if (_credentials.AccessToken == null)
+        if (_credentials.Value!.AccessToken == null)
         {
-            throw new ArgumentNullException(nameof(_credentials.AccessToken), "Must be logged in to complete this operation");
+            throw new ArgumentNullException(nameof(_credentials.Value.AccessToken), "Must be logged in to complete this operation");
         }
 
         // Set to latest access token, in case it has changed
-        _client.AccessToken = _credentials.AccessToken;
+        _client.AccessToken = _credentials.Value.AccessToken;
     }
 }
 
