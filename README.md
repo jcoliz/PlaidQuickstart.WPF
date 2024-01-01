@@ -1,7 +1,7 @@
 # Plaid quickstart for WPF
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md) 
-[![Plaid API](https://img.shields.io/badge/Plaid%20API-v1.370.0-blue
+[![Plaid API](https://img.shields.io/badge/Plaid%20API-v1.482.3-blue
 )](https://github.com/plaid/plaid-openapi)
 
 This repository is a port of the official [Plaid quickstart](https://github.com/plaid/quickstart) project, using the [Going.Plaid](https://github.com/viceroypenguin/Going.Plaid) client libraries, for the Windows Presentation Foundation (WPF) on .NET 8.0.
