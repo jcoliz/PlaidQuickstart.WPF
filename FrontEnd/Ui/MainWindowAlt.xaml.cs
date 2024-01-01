@@ -26,9 +26,6 @@ public partial class MainWindowAlt : Window
         InitializeComponent();
         DataContext = viewModel;
 
-        // Maybe should do this in viewmodel constructor?
-        _ = viewModel.UpdateLoggedInState();
-
         // Launch link as its own window, when we start showing Link
         _viewModel.PropertyChanged += (s, e) =>
         {

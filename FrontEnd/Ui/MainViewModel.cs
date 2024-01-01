@@ -12,16 +12,44 @@ namespace FrontEnd.Ui;
 /// <summary>
 /// View Model for the main interaction window
 /// </summary>
-/// <param name="fetchClient">Client we will use to fetch bank data</param>
-public class MainViewModel(
-    ILogger<MainViewModel> logger, 
-    IOptions<UiSettings> settings, 
-    IOptions<AppSettings> appSettings, 
-    IFetchClient fetchClient,
-    ILinkClient linkClient
-)
+/// <remarks>
+/// I don't love how complex this is now. Worth considering to split in two,
+/// one to manage link interaction and another to manage fetch interaction
+/// </remarks>
+/// <param name="_fetchClient">Client we will use to fetch bank data</param>
+public class MainViewModel
     : INotifyPropertyChanged, IPageStatus
 {
+    #region Fields
+
+    private readonly ILogger<MainViewModel> _logger;
+    private readonly IOptions<UiSettings> _settings;
+    private readonly IOptions<AppSettings> _appSettings;
+    private readonly IFetchClient _fetchClient;
+    private readonly ILinkClient _linkClient;
+    #endregion
+
+    #region Constructor
+
+    public MainViewModel(
+        ILogger<MainViewModel> logger,
+        IOptions<UiSettings> settings,
+        IOptions<AppSettings> appSettings,
+        IFetchClient fetchClient,
+        ILinkClient linkClient
+    )
+    {
+        _logger = logger;
+        _settings = settings;
+        _appSettings = appSettings;
+        _fetchClient = fetchClient;
+        _linkClient = linkClient;
+
+        _ = UpdateLoggedInState();
+    }
+
+    #endregion
+
     #region Events
 
     /// <summary>
@@ -198,7 +226,7 @@ public class MainViewModel(
     /// <summary>
     /// Display name of application
     /// </summary>
-    public string AppName => appSettings.Value?.Name ?? nameof(MainViewModel);
+    public string AppName => _appSettings.Value?.Name ?? nameof(MainViewModel);
 
     #endregion
 
@@ -213,7 +241,7 @@ public class MainViewModel(
     /// </remarks>
     public void LogBrowserConsoleMessage(ConsoleMessageEventArgs e)
     {
-        logger.Log(
+        _logger.Log(
             e.Level switch
             {
                 CefSharp.LogSeverity.Error => LogLevel.Error,
@@ -234,19 +262,6 @@ public class MainViewModel(
         }
     }
 
-    /// <summary>
-    /// Update whether we are logged in or not
-    /// </summary>
-    /// <returns>
-    /// TODO: This should be called from constructor, and then made private
-    /// </returns>
-
-    public async Task UpdateLoggedInState()
-    {
-        IsLoggedIn = await linkClient.IsLoggedIn();
-        IsLoggedInStatusKnown = true;
-    }
-
     #endregion
 
     #region IPageStatus
@@ -260,7 +275,7 @@ public class MainViewModel(
     /// </summary>
     public void LinkLoading()
     {
-        logger.LogInformation("Page Status: Loading");
+        _logger.LogInformation("Page Status: Loading");
 
         IsShowingLink = true;
 
@@ -271,7 +286,7 @@ public class MainViewModel(
     /// </summary>
     public void LinkRunning()
     {
-        logger.LogInformation("Page Status: Running");
+        _logger.LogInformation("Page Status: Running");
 
         // Here we could stop displaying an indication to the user that we were loading
     }
@@ -280,7 +295,7 @@ public class MainViewModel(
     /// </summary>
     public void LinkSuccess()
     {
-        logger.LogInformation("Page Status: Success");
+        _logger.LogInformation("Page Status: Success");
 
         LastErrorMessage = null;
 
@@ -292,7 +307,7 @@ public class MainViewModel(
     /// </summary>
     public void LinkFailed(string reason)
     {
-        logger.LogError("Page Status: Failed {reason}", reason);
+        _logger.LogError("Page Status: Failed {reason}", reason);
 
         LastErrorMessage = reason;
 
@@ -319,17 +334,17 @@ public class MainViewModel(
     {
         get
         {
-            var web_address = settings.Value?.WebAddress;
+            var web_address = _settings.Value?.WebAddress;
 
             if (web_address is null)
             {
-                logger.LogError("Must set WebAddress in UI settings");
+                _logger.LogError("Must set WebAddress in UI settings");
                 return _BlankWebAddress;
             }
             else
             {
                 var result = new Uri(web_address);
-                logger.LogInformation("Using web address {uri}", result);
+                _logger.LogInformation("Using web address {uri}", result);
                 return result;
             }
         }
@@ -344,13 +359,13 @@ public class MainViewModel(
         {
             IsFetchingBalances = true;
             BalancesData?.Table?.Clear();
-            var data = await fetchClient!.Balance();
+            var data = await _fetchClient!.Balance();
             var table = data.ToClientDataTable();
             BalancesData = table.AsDataView();
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "FetchBalances: FAILED");
+            _logger.LogError(ex, "FetchBalances: FAILED");
             BalancesData = null;
         }
         finally
@@ -373,13 +388,13 @@ public class MainViewModel(
         {
             IsFetchingTransactions = true;
             TransactionsData?.Table?.Clear();
-            var data = await fetchClient!.Transactions();
+            var data = await _fetchClient!.Transactions();
             var table = data.ToClientDataTable();
             TransactionsData = table.AsDataView();
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "FetchTransactions: FAILED");
+            _logger.LogError(ex, "FetchTransactions: FAILED");
             TransactionsData = null;
         }
         finally
@@ -398,13 +413,13 @@ public class MainViewModel(
         {
             IsFetchingInstitutions = true;
             InstitutionsResult = "Fetching...";
-            var data = await fetchClient!.Institutions();
+            var data = await _fetchClient!.Institutions();
             var num_rows = data.Rows.Length;
             InstitutionsResult = $"Fetch OK. {num_rows} rows fetched.";
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "FetchInstitutions: FAILED");
+            _logger.LogError(ex, "FetchInstitutions: FAILED");
             InstitutionsResult = ex.ToString();
         }
         IsFetchingInstitutions = false;
@@ -415,8 +430,18 @@ public class MainViewModel(
     /// </summary>
     protected async void DoLogOut()
     {
-        await linkClient.LogOut();
+        await _linkClient.LogOut();
         await UpdateLoggedInState();    
+    }
+
+    /// <summary>
+    /// Update whether we are logged in or not
+    /// </summary>
+
+    private async Task UpdateLoggedInState()
+    {
+        IsLoggedIn = await _linkClient.IsLoggedIn();
+        IsLoggedInStatusKnown = true;
     }
 
     #endregion

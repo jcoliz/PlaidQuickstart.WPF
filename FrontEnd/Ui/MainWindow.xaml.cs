@@ -28,9 +28,6 @@ public partial class MainWindow : Window
         InitializeComponent();
         DataContext = viewModel;
 
-        // Maybe should do this in viewmodel constructor?
-        _ = viewModel.UpdateLoggedInState();
-
         // Attach to browser console messages
         // e.g. any `console.log()` calls will send output here
         Browser.ConsoleMessage += (_, e) => _viewModel.LogBrowserConsoleMessage(e);
