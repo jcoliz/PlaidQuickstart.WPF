@@ -9,22 +9,24 @@ using System.Windows.Data;
 
 namespace FrontEnd.Ui.ValueConverters;
 
-public class BooleanConverter<T> : IValueConverter
+/// <summary>
+/// Generic value converter for converting booleans into other typs
+/// </summary>
+/// <typeparam name="T">Which type to convert into</typeparam>
+public class BooleanConverter<T>(T trueValue, T falseValue) : IValueConverter
 {
-    public BooleanConverter(T trueValue, T falseValue)
-    {
-        True = trueValue;
-        False = falseValue;
-    }
 
     public T True
     {
         get; set;
     }
+    = trueValue;
+
     public T False
     {
         get; set;
     }
+    = falseValue;
 
     public virtual object Convert(object? value, Type targetType, object parameter, CultureInfo culture)
     {
@@ -39,7 +41,7 @@ public class BooleanConverter<T> : IValueConverter
 
     public virtual object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return value is T && EqualityComparer<T>.Default.Equals((T)value, True);
+        return value is T tvalue && EqualityComparer<T>.Default.Equals(tvalue, True);
     }
 }
 
