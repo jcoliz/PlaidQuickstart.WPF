@@ -85,6 +85,9 @@ public class MainViewModel(
     private Uri? _WebAddress;
     private readonly Uri _BlankWebAddress = new("about:blank");
 
+    /// <summary>
+    /// Whether we are showing the Link web pane
+    /// </summary>
     public bool IsShowingLink
     {
         get => _IsShowingLink;
@@ -207,7 +210,6 @@ public class MainViewModel(
     /// <remarks>
     /// Simply redirects them to the system logger.
     /// May be worth considering sending them to the server for logging
-    /// TODO: Make into an ICommand
     /// </remarks>
     public void LogBrowserConsoleMessage(ConsoleMessageEventArgs e)
     {
@@ -236,7 +238,7 @@ public class MainViewModel(
     /// Update whether we are logged in or not
     /// </summary>
     /// <returns>
-    /// TODO: THis should be called from constructor, and then made private
+    /// TODO: This should be called from constructor, and then made private
     /// </returns>
 
     public async Task UpdateLoggedInState()
