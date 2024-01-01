@@ -19,7 +19,7 @@ public partial class MainWindow : Window
     /// </summary>
     /// <param name="viewModel">ViewModel to define our behavior</param>
     /// <param name="logger">Where to send logs</param>
-    public MainWindow(MainViewModel viewModel, IServiceProvider serviceProvider)
+    public MainWindow(MainViewModel viewModel, ILinkClient linkClient, IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
         _viewModel = viewModel;
@@ -30,10 +30,38 @@ public partial class MainWindow : Window
         // Maybe should do this in viewmodel constructor?
         _ = viewModel.UpdateLoggedInState();
 
-        _viewModel.LinkFlowStarting += viewModel_LinkFlowStarting;        
+#if SEPARATE_LINK_WINDOW
+        // Launch link as its own window
+        _viewModel.LinkFlowStarting += LaunchLinkWindow;
+#else
+        // Attach to browser console messages
+        // e.g. any `console.log()` calls will send output here
+        Browser.ConsoleMessage += (_, e) => _viewModel.LogBrowserConsoleMessage(e);
+
+        // Register link client for JS
+        Browser.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
+        Browser.JavascriptObjectRepository.Register(
+            "linkClient",
+            linkClient,
+            options: BindingOptions.DefaultBinder
+        );
+
+        // Register page status reporting for JS
+        IPageStatus pageStatus = _viewModel;
+        Browser.JavascriptObjectRepository.Register(
+            "pageStatus",
+            pageStatus,
+            options: BindingOptions.DefaultBinder
+        );
+#endif
     }
 
-    private void viewModel_LinkFlowStarting(object? sender, EventArgs e)
+    /// <summary>
+    /// Launch Link as its own window
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void LaunchLinkWindow(object? sender, EventArgs e)
     {
         // Open a separate window to display link flow in
 

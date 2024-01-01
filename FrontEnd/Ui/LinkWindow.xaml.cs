@@ -11,12 +11,10 @@ namespace FrontEnd.Ui;
 public partial class LinkWindow : Window
 {
     private readonly MainViewModel _viewModel;
-    private readonly ILogger<LinkWindow> _logger;
 
-    public LinkWindow(MainViewModel viewModel, ILinkClient linkClient, ILogger<LinkWindow> logger)
+    public LinkWindow(MainViewModel viewModel, ILinkClient linkClient)
     {
         _viewModel = viewModel;
-        _logger = logger;
 
         InitializeComponent();
         DataContext = _viewModel;
@@ -25,12 +23,12 @@ public partial class LinkWindow : Window
         // on CEF threads
         // See https://stackoverflow.com/questions/76414363/cefsharp-with-wpf-mvvm
 
+        // Close when link flow complete
+        _viewModel.LinkFlowFinished += ViewModel_LinkFlowFinished;
+
         // Attach to browser console messages
         // e.g. any `console.log()` calls will send output here
         Browser.ConsoleMessage += (_,e) => _viewModel.LogBrowserConsoleMessage(e);
-
-        // Close when link flow complete
-        _viewModel.LinkFlowFinished += viewModel_LinkFlowFinished;
 
         // Register link client for JS
         Browser.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
@@ -49,7 +47,7 @@ public partial class LinkWindow : Window
         );
     }
 
-    private void viewModel_LinkFlowFinished(object? sender, EventArgs e)
+    private void ViewModel_LinkFlowFinished(object? sender, EventArgs e)
     {
         // This event is called on a CEF Thread.
         // We have some UI work now, will send through dispatcher
@@ -62,7 +60,9 @@ public partial class LinkWindow : Window
 
     protected override void OnClosing(CancelEventArgs e)
     {
-        _viewModel.LinkFlowFinished -= viewModel_LinkFlowFinished;
+        // Need to remove this because the viewmodel will continue to live on,
+        // after this class is disposed.
+        _viewModel.LinkFlowFinished -= ViewModel_LinkFlowFinished;
         base.OnClosing(e);
     }
 }

@@ -6,19 +6,33 @@
         xmlns:cef="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         xmlns:local="clr-namespace:FrontEnd.Ui"
         mc:Ignorable="d"
-        Title="{Binding AppName}" Height="450" Width="800">
+        Title="{Binding AppName}" Height="800" Width="600">
     <Grid>
         <TabControl>
             <TabItem Header="Link">
-                <StackPanel Visibility="{Binding IsLoggedInStatusKnown, Converter={StaticResource VisibleIfTrue}}">
-                    <TextBlock Margin="10,10,10,0">Plaid Link Connection</TextBlock>
-                    <TextBlock Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource VisibleIfTrue}}">Status: Connected</TextBlock>
-                    <TextBlock Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource CollapsedIfTrue}}">Status: Disconnected</TextBlock>
-                    <TextBlock Margin="10,10,10,0" Visibility="{Binding LastErrorMessage, Converter={StaticResource VisibleIfTrue}}" TextWrapping="Wrap" Text="{Binding LastErrorMessage}"></TextBlock>
-                    <Button Command="{Binding StartLinkCommand}" Padding="5" Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource CollapsedIfTrue}}">Connect</Button>
-                    <Button Command="{Binding StartLinkCommand}" Padding="5" Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource VisibleIfTrue}}">Update</Button>
-                    <Button Command="{Binding LogOutCommand}" Padding="5" Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource VisibleIfTrue}}">Log Out</Button>
-                </StackPanel>
+                <TabControl SelectedIndex="{Binding LinkIndex, Mode=OneWay}">
+                    <TabControl.ItemContainerStyle>
+                        <Style TargetType="{x:Type TabItem}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </Style>
+                    </TabControl.ItemContainerStyle>
+                    <TabItem>
+                        <StackPanel Visibility="{Binding IsLoggedInStatusKnown, Converter={StaticResource VisibleIfTrue}}">
+                            <TextBlock Margin="10,10,10,0">Plaid Link Connection</TextBlock>
+                            <TextBlock Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource VisibleIfTrue}}">Status: Connected</TextBlock>
+                            <TextBlock Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource CollapsedIfTrue}}">Status: Disconnected</TextBlock>
+                            <TextBlock Margin="10,10,10,0" Visibility="{Binding LastErrorMessage, Converter={StaticResource VisibleIfTrue}}" TextWrapping="Wrap" Text="{Binding LastErrorMessage}"></TextBlock>
+                            <Button Command="{Binding StartLinkCommand}" Padding="5" Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource CollapsedIfTrue}}">Connect</Button>
+                            <Button Command="{Binding StartLinkCommand}" Padding="5" Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource VisibleIfTrue}}">Update</Button>
+                            <Button Command="{Binding LogOutCommand}" Padding="5" Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource VisibleIfTrue}}">Log Out</Button>
+                        </StackPanel>
+                    </TabItem>
+                    <TabItem>
+                        <cef:ChromiumWebBrowser x:Name="Browser"
+                            Address="{Binding WebAddress}">
+                        </cef:ChromiumWebBrowser>
+                    </TabItem>
+                </TabControl>
             </TabItem>
             <TabItem Header="Accounts">
                 <StackPanel>

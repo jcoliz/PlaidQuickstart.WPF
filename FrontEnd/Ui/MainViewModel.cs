@@ -77,27 +77,36 @@ public class MainViewModel(
     #region Properties
 
     /// <summary>
-    /// Web location of the home page
+    /// Current web location to display
     /// </summary>
     public Uri? WebAddress
     {
-        get
+        get => _WebAddress ?? _BlankWebAddress;
+        private set
         {
-            var web_address = settings.Value?.WebAddress;
-
-            if (web_address is null)
+            if (_WebAddress != value)
             {
-                logger.LogError("Must set WebAddress in UI settings");
-                return null;
-            }
-            else
-            {
-                var result = new Uri(web_address);
-                logger.LogInformation("Using web address {uri}", result);
-                return result;
+                _WebAddress = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(WebAddress)));
             }
         }
     }
+    private Uri? _WebAddress;
+    private readonly Uri _BlankWebAddress = new("about:blank");
+
+    public int LinkIndex
+    {
+        get => _LinkIndex;
+        private set
+        {
+            if (_LinkIndex != value)
+            {
+                _LinkIndex = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LinkIndex)));
+            }
+        }
+    }
+    private int _LinkIndex = 0;
 
     /// <summary>
     /// Whether we currently KNOW if we're logged in or not
@@ -187,7 +196,7 @@ public class MainViewModel(
             }
         }
     }
-    private string _InstitutionsResult = "Operation not attempted";
+    private string? _InstitutionsResult = "Operation not attempted";
 
     /// <summary>
     /// Display name of application
@@ -279,7 +288,9 @@ public class MainViewModel(
 
         _ = UpdateLoggedInState();
 
+        WebAddress = null;
         LinkFlowFinished?.Invoke(this, new EventArgs());
+        LinkIndex = 0;
     }
     /// <summary>
     /// Report that Link has failed now
@@ -292,11 +303,36 @@ public class MainViewModel(
 
         _ = UpdateLoggedInState();
 
+        WebAddress = null;
         LinkFlowFinished?.Invoke(this, new EventArgs());
+        LinkIndex = 0;
     }
     #endregion
 
     #region Internal Operations
+
+    /// <summary>
+    /// Web location of the home page
+    /// </summary>
+    protected Uri ConfiguredWebAddress
+    {
+        get
+        {
+            var web_address = settings.Value?.WebAddress;
+
+            if (web_address is null)
+            {
+                logger.LogError("Must set WebAddress in UI settings");
+                return _BlankWebAddress;
+            }
+            else
+            {
+                var result = new Uri(web_address);
+                logger.LogInformation("Using web address {uri}", result);
+                return result;
+            }
+        }
+    }
 
     /// <summary>
     /// Do the work of feteching balances
@@ -389,6 +425,8 @@ public class MainViewModel(
     {
         LinkLoading();
         LinkFlowStarting?.Invoke(this, new EventArgs());
+        LinkIndex = 1;
+        WebAddress = ConfiguredWebAddress;
     }
 
     #endregion

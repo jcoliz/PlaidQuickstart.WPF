@@ -10,6 +10,6 @@
     <Grid>
         <cef:ChromiumWebBrowser x:Name="Browser"
                         Address="{Binding WebAddress}">
-        </cef:ChromiumWebBrowser>        
+        </cef:ChromiumWebBrowser>
     </Grid>
 </Window>
