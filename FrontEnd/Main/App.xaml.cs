@@ -54,8 +54,11 @@ public partial class App : Application
                 configurationBuilder.AddEnvironmentVariables();
             })
             .ConfigureServices((context, services) =>
-            {                
+            {
+                // Only really need ONE of these main window implementations.
+                // Including both here so it's easy to switch between them
                 services.AddSingleton<MainWindow>();
+                services.AddSingleton<MainWindowAlt>();
                 services.AddSingleton<MainViewModel>();
                 services.AddTransient<LinkWindow>();
                 services.Configure<UiSettings>(context.Configuration.GetSection(UiSettings.Section));
@@ -121,6 +124,10 @@ public partial class App : Application
         await _host.StartAsync();
 
         var mainWindow = _host.Services.GetService<MainWindow>();
+
+        // Alternate implementation of main window, shows Link in a separate window.
+        //var mainWindow = _host.Services.GetService<MainWindowAlt>();
+
         mainWindow!.Show();
     }
 

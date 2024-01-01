@@ -18,11 +18,6 @@ public partial class MainWindowAlt : Window
     private readonly IServiceProvider _serviceProvider;
     private readonly MainViewModel _viewModel;
 
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="viewModel">ViewModel to define our behavior</param>
-    /// <param name="logger">Where to send logs</param>
     public MainWindowAlt(MainViewModel viewModel, IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
@@ -34,16 +29,22 @@ public partial class MainWindowAlt : Window
         // Maybe should do this in viewmodel constructor?
         _ = viewModel.UpdateLoggedInState();
 
-        // Launch link as its own window
-        _viewModel.LinkFlowStarting += LaunchLinkWindow;
+        // Launch link as its own window, when we start showing Link
+        _viewModel.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(MainViewModel.IsShowingLink) && _viewModel.IsShowingLink)
+            {
+                // Need to run this through the dispatcher, otherwise we will be blocking here,
+                // which we definitely do not want!!
+                Dispatcher.BeginInvoke(() => LaunchLinkWindow());
+            }
+        };
     }
 
     /// <summary>
     /// Launch Link as its own window
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void LaunchLinkWindow(object? sender, EventArgs e)
+    private void LaunchLinkWindow()
     {
         // Open a separate window to display link flow in
 

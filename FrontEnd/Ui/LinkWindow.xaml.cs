@@ -24,7 +24,7 @@ public partial class LinkWindow : Window
         // See https://stackoverflow.com/questions/76414363/cefsharp-with-wpf-mvvm
 
         // Close when link flow complete
-        _viewModel.LinkFlowFinished += ViewModel_LinkFlowFinished;
+        _viewModel.PropertyChanged += ViewModel_PropertyChanged;
 
         // Attach to browser console messages
         // e.g. any `console.log()` calls will send output here
@@ -47,22 +47,27 @@ public partial class LinkWindow : Window
         );
     }
 
-    private void ViewModel_LinkFlowFinished(object? sender, EventArgs e)
+    private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        // This event is called on a CEF Thread.
-        // We have some UI work now, will send through dispatcher
-        Dispatcher.BeginInvoke(() =>
+        // When we are done with link flow, close this window
+
+        if (e.PropertyName == nameof(MainViewModel.IsShowingLink) && !_viewModel.IsShowingLink)
         {
-            // Close this window
-            Close();
-        });
+            // This event is called on a CEF Thread.
+            // We have some UI work now, will send through dispatcher
+            Dispatcher.BeginInvoke(() => Close());
+        }
     }
 
     protected override void OnClosing(CancelEventArgs e)
     {
         // Need to remove this because the viewmodel will continue to live on,
         // after this class is disposed.
-        _viewModel.LinkFlowFinished -= ViewModel_LinkFlowFinished;
+        _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
+
+        // Just in case WE closed the window, be sure to report to the viewmodel that we closed!
+        _viewModel.IsShowingLink = false;
+
         base.OnClosing(e);
     }
 }

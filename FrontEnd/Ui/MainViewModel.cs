@@ -23,20 +23,11 @@ public class MainViewModel(
     : INotifyPropertyChanged, IPageStatus
 {
     #region Events
+
     /// <summary>
     /// Fires when something has changed
     /// </summary>
     public event PropertyChangedEventHandler? PropertyChanged;
-
-    /// <summary>
-    /// Fires when Link is starting
-    /// </summary>
-    public event EventHandler? LinkFlowStarting;
-
-    /// <summary>
-    /// Fires when Link is complete
-    /// </summary>
-    public event EventHandler? LinkFlowFinished;
 
     #endregion
 
@@ -97,7 +88,7 @@ public class MainViewModel(
     public bool IsShowingLink
     {
         get => _IsShowingLink;
-        private set
+        set
         {
             if (_IsShowingLink != value)
             {
@@ -266,7 +257,6 @@ public class MainViewModel(
     {
         logger.LogInformation("Page Status: Loading");
 
-        LinkFlowStarting?.Invoke(this, new EventArgs());
         IsShowingLink = true;
         WebAddress = ConfiguredWebAddress;
 
@@ -293,7 +283,6 @@ public class MainViewModel(
         _ = UpdateLoggedInState();
 
         WebAddress = null;
-        LinkFlowFinished?.Invoke(this, new EventArgs());
         IsShowingLink = false;
     }
     /// <summary>
@@ -308,7 +297,6 @@ public class MainViewModel(
         _ = UpdateLoggedInState();
 
         WebAddress = null;
-        LinkFlowFinished?.Invoke(this, new EventArgs());
         IsShowingLink = false;
     }
     #endregion

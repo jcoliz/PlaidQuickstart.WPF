@@ -6,7 +6,7 @@
         xmlns:cef="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         xmlns:local="clr-namespace:FrontEnd.Ui"
         mc:Ignorable="d"
-        Title="{Binding AppName}" Height="800" Width="600">
+        Title="{Binding AppName}" Height="800" Width="800">
     <Grid>
         <TabControl>
             <TabItem Header="Link">
