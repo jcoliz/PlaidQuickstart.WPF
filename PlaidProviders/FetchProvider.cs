@@ -89,13 +89,11 @@ public class FetchProvider(ILogger<FetchProvider> _logger, IOptions<PlaidCredent
             cursor = response.NextCursor;
         }
 
-        const int numresults = 8;
         var result = new WireDataTable
         {
             Columns = ColumnsFrom("Name", "Amount/r", "Date/r", "Category", "Channel"),
             Rows = added
                 .OrderBy(x => x.Date)
-                .TakeLast(numresults)
                 .Select(x =>
                     new Row(
                         x.Name ?? string.Empty,

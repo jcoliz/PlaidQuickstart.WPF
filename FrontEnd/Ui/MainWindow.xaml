@@ -43,12 +43,16 @@
                 </StackPanel>
             </TabItem>
             <TabItem Header="Transactions">
-                <StackPanel>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="1*" />
+                    </Grid.RowDefinitions>
                     <StackPanel Orientation="Horizontal" Margin="5">
                         <Button Command="{Binding FetchTransactionsCommand}" Padding="5">Fetch</Button>
                     </StackPanel>
-                    <DataGrid Name="dgTransactions" ItemsSource="{Binding TransactionsData}" IsReadOnly="True"></DataGrid>
-                </StackPanel>
+                    <DataGrid Grid.Row="1" Name="dgTransactions" ItemsSource="{Binding TransactionsData}" IsReadOnly="True"></DataGrid>
+                </Grid>
             </TabItem>
             <TabItem Header="Institutions">
                 <StackPanel>
