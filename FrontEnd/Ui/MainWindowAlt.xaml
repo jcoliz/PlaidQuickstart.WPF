@@ -11,7 +11,7 @@
         <TabControl>
             <TabItem Header="Link">
                 <StackPanel Visibility="{Binding IsLoggedInStatusKnown, Converter={StaticResource VisibleIfTrue}}">
-                    <TextBlock Margin="10,10,10,0">Plaid Link Connection</TextBlock>
+                    <TextBlock FontWeight="Bold" FontSize="16" Margin="10,10,10,0">Plaid Link Connection</TextBlock>
                     <TextBlock Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource VisibleIfTrue}}">Status: Connected</TextBlock>
                     <TextBlock Margin="10,10,10,0" Visibility="{Binding IsLoggedIn, Converter={StaticResource CollapsedIfTrue}}">Status: Disconnected</TextBlock>
                     <TextBlock Margin="10,10,10,0" Visibility="{Binding LastErrorMessage, Converter={StaticResource VisibleIfTrue}}" TextWrapping="Wrap" Text="{Binding LastErrorMessage}"></TextBlock>
