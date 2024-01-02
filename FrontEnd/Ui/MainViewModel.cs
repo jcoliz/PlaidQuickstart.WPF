@@ -179,21 +179,21 @@ public class MainViewModel
     private bool _IsLoggedIn = false;
 
     /// <summary>
-    /// Most recently reported error
+    /// Current human-readable status of Link operation
     /// </summary>
-    public string? LastErrorMessage
+    public string? Status
     {
-        get => _LastErrorMessage;
+        get => _Status;
         private set
         {
-            if (_LastErrorMessage != value)
+            if (_Status != value)
             {
-                _LastErrorMessage = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LastErrorMessage)));
+                _Status = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Status)));
             }
         }
     }
-    private string? _LastErrorMessage;
+    private string? _Status;
 
     /// <summary>
     /// Latest balances data from server
@@ -259,7 +259,7 @@ public class MainViewModel
 
         if (e.Level == LogSeverity.Error)
         {
-            LastErrorMessage = e.Message;
+            Status = e.Message;
         }
     }
 
@@ -298,7 +298,7 @@ public class MainViewModel
     {
         _logger.LogInformation("Page Status: Success");
 
-        LastErrorMessage = null;
+        Status = null;
 
         LinkDone();
     }
@@ -310,7 +310,7 @@ public class MainViewModel
     {
         _logger.LogError("Page Status: Failed {reason}", reason);
 
-        LastErrorMessage = reason;
+        Status = reason;
 
         LinkDone();
     }
@@ -445,7 +445,7 @@ public class MainViewModel
         catch(Exception ex)
         {
             _logger.LogError(ex, "Login: FAILED");
-            LastErrorMessage = ex.ToString();
+            Status = ex.ToString();
         }
     }
 
