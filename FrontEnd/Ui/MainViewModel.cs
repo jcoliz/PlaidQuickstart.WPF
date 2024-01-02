@@ -437,8 +437,16 @@ public class MainViewModel
 
     private async Task UpdateLoggedInState()
     {
-        IsLoggedIn = await _linkClient.IsLoggedIn();
-        IsLoggedInStatusKnown = true;
+        try
+        {
+            IsLoggedIn = await _linkClient.IsLoggedIn();
+            IsLoggedInStatusKnown = true;
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Login: FAILED");
+            LastErrorMessage = ex.ToString();
+        }
     }
 
     #endregion
