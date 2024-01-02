@@ -310,7 +310,7 @@ public class MainViewModel
     {
         _logger.LogError("Page Status: Failed {reason}", reason);
 
-        Status = reason;
+        Status = $"Error: {reason}";
 
         LinkDone();
     }
