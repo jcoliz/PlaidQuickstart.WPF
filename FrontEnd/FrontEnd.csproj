@@ -8,6 +8,7 @@
 		<UseWPF>true</UseWPF>
 		<Platforms>x64;ARM64</Platforms>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 	</PropertyGroup>
 
 	<ItemGroup>
