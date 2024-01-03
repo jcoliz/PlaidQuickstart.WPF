@@ -1,5 +1,6 @@
 # Plaid quickstart for WPF
 
+[![Build](https://github.com/jcoliz/PlaidQuickstart.WPF/actions/workflows/buildtest.yml/badge.svg)](https://github.com/jcoliz/PlaidQuickstart.WPF/actions/workflows/buildtest.yml)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md) 
 [![Plaid API](https://img.shields.io/badge/Plaid%20API-v1.482.3-blue
 )](https://github.com/plaid/plaid-openapi)
