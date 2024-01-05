@@ -9,6 +9,7 @@ using Going.Plaid.Item;
 using Going.Plaid.Link;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Globalization;
 using System.Net;
 using System.Runtime.CompilerServices;
 
@@ -29,13 +30,15 @@ public class LinkProvider(ILogger<LinkProvider> logger, IOptions<AppSettings> ap
     {
         CheckCredentials();
 
+        var language = credentials.Value?.Language ?? CultureInfo.CurrentCulture.TwoLetterISOLanguageName ?? "en";
+
         var request = new LinkTokenCreateRequest()
         {
             AccessToken = credentials.Value!.AccessToken,
             User = new LinkTokenCreateRequestUser { ClientUserId = Guid.NewGuid().ToString(), },
             ClientName = appSettings?.Value?.Name ?? ".NET Link Provider",
             Products = credentials.Value!.Products!.Split(',').Select(p => Enum.Parse<Products>(p, true)).ToArray(),
-            Language = Enum.Parse<Language>(credentials.Value?.Language ?? "English"),
+            Language = language,
             CountryCodes = credentials.Value!.CountryCodes!.Split(',').Select(p => Enum.Parse<CountryCode>(p, true)).ToArray(),
         };
         var response = await client.LinkTokenCreateAsync(request);
