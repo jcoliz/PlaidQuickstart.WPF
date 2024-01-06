@@ -28,13 +28,11 @@ public class LinkProvider(ILogger<LinkProvider> logger, IOptions<AppSettings> ap
 {
     public async Task<string> CreateLinkToken()
     {
-        CheckCredentials();
-
         var language = credentials.Value?.Language ?? CultureInfo.CurrentCulture.TwoLetterISOLanguageName ?? "en";
 
         var request = new LinkTokenCreateRequest()
         {
-            AccessToken = credentials.Value!.AccessToken,
+            AccessToken = isLoggedIn ? credentials.Value!.AccessToken : null,
             User = new LinkTokenCreateRequestUser { ClientUserId = Guid.NewGuid().ToString(), },
             ClientName = appSettings?.Value?.Name ?? ".NET Link Provider",
             Products = credentials.Value!.Products!.Split(',').Select(p => Enum.Parse<Products>(p, true)).ToArray(),
@@ -87,9 +85,7 @@ public class LinkProvider(ILogger<LinkProvider> logger, IOptions<AppSettings> ap
 
     public Task<bool> IsLoggedIn()
     {
-        CheckCredentials();
-
-        var result = credentials.Value.AccessToken is not null;
+        var result = isLoggedIn;
 
         logger.LogInformation("IsLoggedIn: OK {result}", result);
 
@@ -112,6 +108,16 @@ public class LinkProvider(ILogger<LinkProvider> logger, IOptions<AppSettings> ap
         if (credentials == null || credentials.Value == null || credentials.Value.Products == null)
         {
             throw new ArgumentNullException(nameof(credentials), "Please supply Plaid credentials in .NET configuration");
+        }
+    }
+
+    private bool isLoggedIn
+    {
+        get
+        {
+            CheckCredentials();
+
+            return !string.IsNullOrEmpty(credentials.Value.AccessToken);
         }
     }
 
